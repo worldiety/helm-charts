@@ -1,0 +1,38 @@
+{{ $namespace := .Values.namespace }}
+{{- $fullName := include "project-template.fullname" . -}}
+{{- if .Values.servePublicly -}}
+{{- if .Values.customhosts -}}
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  namespace: {{ $namespace }}
+  name: {{ include "project-template.fullname" . }}-custom
+  labels:
+    {{- include "project-template.labels" . | nindent 4 }}
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "20m"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  # CNAME records must exists for all custom hostnames
+  tls:
+    - hosts:
+        {{range .Values.customhosts }}
+        {{ if .tls }}
+        - {{ .host | quote }}
+      secretName: {{ .host }}
+    {{ end }}
+  {{ end }}
+  rules:
+    {{range .Values.customhosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+          {{range .paths }}
+          - path: {{ .path }}
+            backend:
+              servicePort: {{ .port }}
+              serviceName: {{ $fullName }}
+    {{ end }}
+  {{ end }}
+  {{ end }}
+{{ end }}

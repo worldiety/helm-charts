@@ -1,0 +1,11 @@
+This template must only be used by the DevOps team.
+Found the following namespaces:
+{{- $labels := include "user-creation.labels" . | nindent 4 }}
+{{- range .Values.projects }}
+{{ $namespace := .name }}
+{{ $username := printf "%s-user" .name }}
+- namespace: {{ $namespace }}
+  user:      {{ $username }}
+
+{{ end }}
+

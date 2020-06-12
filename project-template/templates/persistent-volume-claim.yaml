@@ -1,0 +1,21 @@
+{{ $contact := .Values.contact.name }}
+  {{ $namespace := .Values.namespace }}
+{{- if .Values.persistentVolumes -}}
+  {{- $contact := .Values.contact.name -}}
+  {{ range .Values.persistentVolumes }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  namespace: {{ $namespace }}
+  name: {{ .name }}-folder
+  labels:
+    {{- include "project-template.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .storageSize }}Gi
+---
+  {{ end }}
+{{ end }}

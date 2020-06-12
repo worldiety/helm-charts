@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: {{ .Values.namespace }}
+  name: {{ include "project-template.fullname" . }}
+  labels:
+    {{- include "project-template.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicas }}
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      {{- include "project-template.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "project-template.selectorLabels" . | nindent 8 }}
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsGroup: 1000
+        runAsUser: 1000
+      containers:
+        - name: {{ .Values.name }}
+          {{- if .Values.gitlabImage -}}
+          {{ $repo := .Values.gitlabImage.repository }}
+          {{ $tag := .Values.gitlabImage.tag }}
+          {{ $user := .Values.gitlabImage.user }}
+          {{ $passwd := .Values.gitlabImage.password }}
+          {{ if and (ne $repo "") (ne $tag "") }}
+          image: {{ .Values.gitlabImage.repository }}:{{ .Values.gitlabImage.tag }}
+          {{ else }}
+          image: {{ .Values.dockerhubImage }}
+          {{ end }}
+          {{ else }}
+          image: {{ .Values.dockerhubImage }}
+          {{ end }}
+          # We do not need to specify a pullPolicy, because we want to use the default behaviour:
+          # Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
+          # ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
+          #
+          #pullPolicy: IfNotPresent
+          volumeMounts:
+          {{- if .Values.persistentVolumes -}}
+            {{ range .Values.persistentVolumes }}
+            - mountPath: {{ .path }}
+              name: {{ .name }}-folder
+            {{ end }}
+          {{ end }}
+          {{- if .Values.temporaryVolumes -}}
+            {{ range .Values.temporaryVolumes }}
+            - mountPath: {{ .path }}
+              name: {{ .name }}-folder
+          {{ end }}
+          {{ end }}
+          ports:
+            - containerPort: {{ .Values.containerPort }}
+              name: http
+          resources:
+            {{- if .Values.resources -}}
+            {{- toYaml .Values.resources | nindent 12 }}
+            {{ end }}
+          securityContext:
+            readOnlyRootFilesystem: true
+            privileged: false
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - all
+      volumes:
+        {{- if .Values.persistentVolumes -}}
+        {{ range .Values.persistentVolumes }}
+        - name: {{ .name }}-folder
+          persistentVolumeClaim:
+            claimName: {{ .name }}-folder
+        {{ end }}
+        {{ end }}
+        {{- if .Values.temporaryVolumes -}}
+        {{ range .Values.temporaryVolumes }}
+        - name: {{ .name }}-folder
+          emptyDir: {}
+        {{ end }}
+        {{ end }}
