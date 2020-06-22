@@ -93,6 +93,7 @@ autoscaling:
 # If you want to use the docker image of this repository, you should use the following variables
 # in the CI process:
 # 
+#   --set gitlabImage.registry=${CI_REGISTRY}
 #   --set gitlabImage.repository=${CI_REGISTRY_IMAGE}
 #   --set gitlabImage.tag=${CI_JOB_STAGE}
 #   --set gitlabImage.user=${CI_REGISTRY_USER}
@@ -101,8 +102,9 @@ autoscaling:
 #  These should not be set here!
 
 # gitlabImage:
+#   registry: "registry.worldiety.net/mspielberger/forms-example-service"
 #   repository: "registry.worldiety.net/worldiety/customer/wdy/monitoriety/server"
-#   tag: "1.0.0"
+#   tag: "develop"
 #   user: "CHANGE-ME-PASSWORD"
 #   password: "CHANGE-ME-PASSWORD"
 
@@ -123,7 +125,8 @@ containerPort: 8080
 # 
 # ATTENTION: By default, the application has no write access to the file system.
 #
-# Every replica has its own set of (non)persistent volumes.
+# Every replica has its own set of non-persistent volumes, whereas all persistent volumes
+# will be shared between all replicas. E.g. the persistent Volumes have a ReadWriteMany access mode.
 # The unit is set by the chart. The unit is GB, e.g. storageSize: 0.5 equals 500 MB
 # All folders that are needed for write access MUST be specified below.
 # TODO: validate: each replicas must have its own (non)persistent volume

@@ -23,6 +23,10 @@ spec:
         runAsNonRoot: true
         runAsGroup: 1000
         runAsUser: 1000
+      {{ if .Values.gitlabImage }}
+      imagePullSecrets:
+        - name: {{ include "project-template.image-pull-secret-name" . }}
+      {{ end }}
       containers:
         - name: {{ .Values.name }}
           {{- if .Values.gitlabImage -}}
@@ -44,18 +48,20 @@ spec:
           #
           #pullPolicy: IfNotPresent
           volumeMounts:
-          {{- if .Values.persistentVolumes -}}
+            {{- if .Values.persistentVolumes -}}
             {{ range .Values.persistentVolumes }}
             - mountPath: {{ .path }}
               name: {{ .name }}-folder
             {{ end }}
-          {{ end }}
-          {{- if .Values.temporaryVolumes -}}
+            {{ end }}
+
+            {{- if .Values.temporaryVolumes -}}
             {{ range .Values.temporaryVolumes }}
             - mountPath: {{ .path }}
               name: {{ .name }}-folder
-          {{ end }}
-          {{ end }}
+            {{ end }}
+            {{ end }}
+
           ports:
             - containerPort: {{ .Values.containerPort }}
               name: http
@@ -78,6 +84,7 @@ spec:
             claimName: {{ .name }}-folder
         {{ end }}
         {{ end }}
+
         {{- if .Values.temporaryVolumes -}}
         {{ range .Values.temporaryVolumes }}
         - name: {{ .name }}-folder

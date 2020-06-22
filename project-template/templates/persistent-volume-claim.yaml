@@ -12,7 +12,7 @@ metadata:
     {{- include "project-template.labels" . | nindent 4 }}
 spec:
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   resources:
     requests:
       storage: {{ .storageSize }}Gi

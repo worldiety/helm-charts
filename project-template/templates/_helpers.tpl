@@ -30,6 +30,25 @@ example-1-helm-example-1.delta.k8s-wdy.de
 {{- end -}}
 
 {{/*
+ImagePullSecret name
+*/}}
+{{- define "project-template.image-pull-secret-name" -}}
+{{- $fullName := include "project-template.fullname" . -}}
+{{- printf "%s-image-pull-secret-name" $fullName -}}
+{{- end -}}
+
+{{/*
+ImagePullSecret data
+*/}}
+{{- define "project-template.image-pull-secret-data" -}}
+{{- $registry := .Values.gitlabImage.registry -}}
+{{- $registryUser := .Values.gitlabImage.user -}}
+{{- $registryPassword := .Values.gitlabImage.password -}}
+{{- $registryAuth := printf "%s:%s" $registryUser $registryPassword | b64enc -}}
+{{- printf "{\"auths\":{\"%s\":{\"username\":\"%s\",\"password\":\"%s\",\"auth\":\"%s\"}}}" $registry $registryUser $registryPassword $registryAuth | b64enc -}}
+{{- end -}}
+
+{{/*
 Common labels
 */}}
 {{- define "project-template.labels" -}}
