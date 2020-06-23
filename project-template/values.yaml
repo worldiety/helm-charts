@@ -129,7 +129,6 @@ containerPort: 8080
 # will be shared between all replicas. E.g. the persistent Volumes have a ReadWriteMany access mode.
 # The unit is set by the chart. The unit is GB, e.g. storageSize: 0.5 equals 500 MB
 # All folders that are needed for write access MUST be specified below.
-# TODO: validate: each replicas must have its own (non)persistent volume
 
 # *** PERSISTENT VOLUMES ***
 # List of all persistent volumes of the application.
