@@ -66,6 +66,7 @@ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 wdy.app: {{ .Values.name }}
 wdy.contact: {{ .Values.contact.name | replace " " "_" }}
+ci.stage: {{ .Values.stage }}
 {{- end -}}
 
 {{/*

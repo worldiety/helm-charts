@@ -35,6 +35,14 @@
 
 # namespace: "helm-example-1"
 
+# This value is used, to set an label for each object with the stage.
+# The stage-label is used to check if helm have to create an custom-ingress
+# Helm wouldn't create an custom-ingress on the stages "stage" and "dev"
+# The stage have to be set in the ci process by using this flag:
+#
+#   --set stage=${CI_JOB_STAGE}
+#
+# stage: ""
 
 # Number of replicas of the application.
 # Should be greater than 1 to ensure a disruption free service.
