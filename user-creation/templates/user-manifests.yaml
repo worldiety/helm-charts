@@ -1,8 +1,9 @@
 
 {{- $labels := include "user-creation.labels" . | nindent 4 }}
 {{- range .Values.projects }}
-{{ $namespace := .name }}
-{{ $username := printf "%s-user" .name }}
+{{ $namespace := .name | replace "/" "-"}}
+{{ $name := .name | replace "/" "-" }}
+{{ $username := printf "%s-user" $name }}
 {{ $rolename := printf "%s-RoleName" $username }}
 
 # We loop over all projects, specified in the values.yaml

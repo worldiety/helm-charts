@@ -1,11 +1,10 @@
-{{ $namespace := .Values.namespace }}
 {{- $fullName := include "project-template.fullname" . -}}
 {{- if .Values.servePublicly -}}
 {{- if .Values.customhosts -}}
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  namespace: {{ $namespace }}
+  namespace: {{ include "project-template.namespace" . }}
   name: {{ include "project-template.fullname" . }}-custom
   labels:
     {{- include "project-template.labels" . | nindent 4 }}

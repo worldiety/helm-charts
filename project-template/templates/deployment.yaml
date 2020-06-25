@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: {{ .Values.namespace }}
+  namespace: {{ include "project-template.namespace" . }}
   name: {{ include "project-template.fullname" . }}
   labels:
     {{- include "project-template.labels" . | nindent 4 }}

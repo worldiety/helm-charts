@@ -1,7 +1,7 @@
 apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:
-  namespace: {{ .Values.namespace }}
+  namespace: {{ include "project-template.namespace" . }}
   name: {{ include "project-template.fullname" . }}
   labels:
     {{- include "project-template.labels" . | nindent 4 }}

@@ -17,6 +17,12 @@ Create chart name and version as used by the chart label.
 {{- end -}}
 
 {{/*
+Replaces the / in the namespace to an -.
+*/}}
+{{- define "project-template.namespace" -}}
+{{- printf "%s" .Values.namespace | replace "/" "-" -}}
+{{- end -}}
+{{/*
 Project Domain
 
 Every application has its own unique domain {NAME}-{NAMESPACE}.{CLUSTER-DOMAIN}, e.g.:
