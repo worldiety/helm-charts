@@ -119,6 +119,7 @@ autoscaling:
 
 
 # Environment variables that should be available in the container.
+# (OPTIONAL - default: no environment variables available)
 
 # environmentVariables:
 #   USERNAME: "demo"
