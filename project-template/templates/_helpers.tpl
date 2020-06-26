@@ -26,14 +26,14 @@ Replaces the / in the namespace to an -.
 {{/*
 Project Domain
 
-Every application has its own unique domain {NAME}-{NAMESPACE}.{CLUSTER-DOMAIN}, e.g.:
+Every application has its own unique domain {NAMESPACE}-{NAME}.{CLUSTER-DOMAIN}, e.g.:
 example-1-helm-example-1.delta.k8s-wdy.de
 ^ NAME    ^ NAMESPACE    ^ CLUSTER-DOMAIN
 
 */}}
 {{- define "project-template.domain" -}}
 {{- $clusterdomain := "delta.k8s-wdy.de" -}}
-{{- printf "%s-%s.%s" .Values.name .Values.namespace $clusterdomain -}}
+{{- printf "%s-%s.%s" .Values.namespace .Values.name $clusterdomain -}}
 {{- end -}}
 
 {{/*
