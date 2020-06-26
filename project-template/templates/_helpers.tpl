@@ -22,6 +22,7 @@ Replaces the / in the namespace to an -.
 {{- define "project-template.namespace" -}}
 {{- printf "%s" .Values.namespace | replace "/" "-" -}}
 {{- end -}}
+
 {{/*
 Project Domain
 
@@ -52,6 +53,21 @@ ImagePullSecret data
 {{- $registryPassword := .Values.gitlabImage.password -}}
 {{- $registryAuth := printf "%s:%s" $registryUser $registryPassword | b64enc -}}
 {{- printf "{\"auths\":{\"%s\":{\"username\":\"%s\",\"password\":\"%s\",\"auth\":\"%s\"}}}" $registry $registryUser $registryPassword $registryAuth | b64enc -}}
+{{- end -}}
+
+{{/*
+Filter custom domains by buildtype
+
+We concatenate "TRUE" for every found domain.
+*/}}
+{{- define "project-template.filteredcustomdomains" -}}
+{{- $buildtype := .Values.buildtype -}}
+{{ $customhosts := .Values.customhosts }}
+{{range $customhosts }}
+{{ if eq .buildtype $buildtype }}
+"TRUE"
+{{- end -}}
+{{- end -}}
 {{- end -}}
 
 {{/*
