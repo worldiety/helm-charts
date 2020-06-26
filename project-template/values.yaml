@@ -14,10 +14,9 @@
 # This name will set to each object (deployment, service, ingress etc.) in the cluster, which is created by the chart.
 # Use this flag in the CI process:
 # 
-#    export NAMESPACE_PREFIX=$( echo "${CI_PROJECT_NAMESPACE}" | shasum -a 256 | cut -c1-7 )
-#    --set name=${NAMESPACE}
+#    --set name=${CI_PROJECT_NAME}-${CI_ENVIRONMENT_SLUG}
 # 
-# name: "example-1"
+# name: "exampleproject-prod"
 
 
 # This field describes the contact person. The chart will automatically add an label named person to each object.
@@ -30,7 +29,8 @@
 # This value is used, to define the namespace where the application will be deployed.
 # Property might be set in the ci process by using this flag: 
 # 
-#    --set namespace=${CI_PROJECT_NAMESPACE}-${CI_PROJECT_NAME}
+#    export NAMESPACE_PREFIX=$( echo "${CI_PROJECT_NAMESPACE}" | shasum -a 256 | cut -c1-7 )
+#    --set namespace=${NAMESPACE_PREFIX}-${CI_PROJECT_NAME}
 # 
 # ATTENTION: The current kubernetes-user/ci must have the read/write permissions for this namespace.
 
@@ -40,7 +40,7 @@
 # Set the buildtype of the current deployment, e.g. dev, prod etc.
 # The buildtype must be provided in the ci process by using this flag:
 #
-#   --set buildtype=${CI_JOB_STAGE}
+#   --set buildtype=${CI_ENVIRONMENT_SLUG}
 #
 # buildtype: "prod"
 
@@ -104,7 +104,7 @@ autoscaling:
 # 
 #   --set gitlabImage.registry=${CI_REGISTRY}
 #   --set gitlabImage.repository=${CI_REGISTRY_IMAGE}
-#   --set gitlabImage.tag=${CI_JOB_STAGE}
+#   --set gitlabImage.tag=${CI_ENVIRONMENT_SLUG}
 #   --set gitlabImage.user=${CI_REGISTRY_USER}
 #   --set gitlabImage.password=${CI_REGISTRY_PASSWORD}
 # 

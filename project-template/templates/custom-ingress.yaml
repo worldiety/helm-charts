@@ -1,6 +1,7 @@
 {{- $fullName := include "project-template.fullname" . -}}
 {{- $buildtype := .Values.buildtype -}}
-{{- if and .Values.servePublicly .Values.customhosts -}}
+{{- $hasCustomDomains := contains ("TRUE") (include "project-template.filteredcustomdomains" .) -}}
+{{- if and (.Values.customhosts) (.Values.servePublicly) ($hasCustomDomains) -}}
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
@@ -16,19 +17,18 @@ spec:
   tls:
     - hosts:
       {{range .Values.customhosts }}
-        {{ if and (.tls) (eq .buildtype $buildtype) }}
+        {{- if and (.tls) (eq .buildtype $buildtype) -}}
         - {{ .host | quote }}
       secretName: {{ .host }}
-        {{ end }}
+        {{- end -}}
       {{ end }}
 
   rules:
     {{range .Values.customhosts }}
-    {{ if eq .buildtype $buildtype }}
+    {{- if eq .buildtype $buildtype -}}
     - host: {{ .host | quote }}
       http:
-        paths:
-          {{range .paths }}
+        paths: {{ range .paths }}
           - path: {{ .path }}
             backend:
               servicePort: {{ .port }}
