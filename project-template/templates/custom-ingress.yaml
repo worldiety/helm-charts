@@ -1,6 +1,6 @@
 {{- $fullName := include "project-template.fullname" . -}}
-{{- if .Values.servePublicly -}}
-{{- if .Values.customhosts -}}
+{{- $buildtype := .Values.buildtype -}}
+{{- if and .Values.servePublicly .Values.customhosts -}}
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
@@ -12,17 +12,19 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-body-size: "20m"
     cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
-  # CNAME records must exists for all custom hostnames
+  # CNAME records must exist for all custom hostnames
   tls:
     - hosts:
-        {{range .Values.customhosts }}
-        {{ if .tls }}
+      {{range .Values.customhosts }}
+        {{ if and (.tls) (eq .buildtype $buildtype) }}
         - {{ .host | quote }}
       secretName: {{ .host }}
-    {{ end }}
-  {{ end }}
+        {{ end }}
+      {{ end }}
+
   rules:
     {{range .Values.customhosts }}
+    {{ if eq .buildtype $buildtype }}
     - host: {{ .host | quote }}
       http:
         paths:
@@ -31,7 +33,8 @@ spec:
             backend:
               servicePort: {{ .port }}
               serviceName: {{ $fullName }}
+          {{ end }}
     {{ end }}
-  {{ end }}
-  {{ end }}
+    {{ end }}
+
 {{ end }}
