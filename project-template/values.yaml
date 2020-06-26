@@ -14,7 +14,8 @@
 # This name will set to each object (deployment, service, ingress etc.) in the cluster, which is created by the chart.
 # Use this flag in the CI process:
 # 
-#    --set name=${CI_PROJECT_NAME}-${CI_JOB_STAGE}
+#    export NAMESPACE_PREFIX=$( echo "${CI_PROJECT_NAMESPACE}" | shasum -a 256 | cut -c1-7 )
+#    --set name=${NAMESPACE}
 # 
 # name: "example-1"
 
@@ -35,14 +36,14 @@
 
 # namespace: "helm-example-1"
 
-# This value is used, to set an label for each object with the stage.
-# The stage-label is used to check if helm have to create an custom-ingress
-# Helm wouldn't create an custom-ingress on the stages "stage" and "dev"
-# The stage have to be set in the ci process by using this flag:
+
+# Set the buildtype of the current deployment, e.g. dev, prod etc.
+# The buildtype must be provided in the ci process by using this flag:
 #
-#   --set stage=${CI_JOB_STAGE}
+#   --set buildtype=${CI_JOB_STAGE}
 #
-# stage: ""
+# buildtype: "prod"
+
 
 # Number of replicas of the application.
 # Should be greater than 1 to ensure a disruption free service.
@@ -188,6 +189,7 @@ servePublicly: true
 
 # customhosts:
 #   - host: "project.example.com"
+#     buildtype: prod
 #     tls: true
 #     paths:
 #       - path: "/"
