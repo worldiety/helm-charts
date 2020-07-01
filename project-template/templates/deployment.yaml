@@ -70,7 +70,7 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
             {{ end }}
           env:            
-          {{- include "helpers.list-env-variables" . | indent 12 }}
+          {{- include "project-template.environment-variables-list" . | indent 12 }}
           securityContext:
             readOnlyRootFilesystem: true
             privileged: false
