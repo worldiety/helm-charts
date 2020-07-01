@@ -118,6 +118,14 @@ autoscaling:
 #   password: "CHANGE-ME-PASSWORD"
 
 
+# Environment variables that should be available in the container.
+# (OPTIONAL - default: no environment variables available)
+
+# environmentVariables:
+#   USERNAME: "demo"
+#   PASSWORD: "demo"
+
+
 # Port which will be used for traffic by the application.
 # (OPTIONAL - default: 8080)
 

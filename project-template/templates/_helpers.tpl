@@ -92,3 +92,25 @@ Selector labels
 app.kubernetes.io/name: {{ include "project-template.fullname" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}
+
+{{/*
+Creates the full env vars secret name.
+*/}}
+{{- define "project-template.environment-variables-secret-name" -}}
+{{- $fullName := include "project-template.fullname" . -}}
+{{- printf "%s-env-vars-secret-name" $fullName -}}
+{{- end -}}
+
+{{/*
+List of environment variables.
+*/}}
+{{- define "project-template.environment-variables-list"}}
+{{- $secretName := include "project-template.environment-variables-secret-name" . -}}
+{{- range $key, $val := .Values.environmentVariables }}
+- name: {{ $key }}
+  valueFrom:
+    secretKeyRef:
+      name: {{ $secretName }}
+      key: {{ $key }}
+{{- end}}
+{{- end }}

@@ -69,6 +69,8 @@ spec:
             {{- if .Values.resources -}}
             {{- toYaml .Values.resources | nindent 12 }}
             {{ end }}
+          env:            
+          {{- include "project-template.environment-variables-list" . | indent 12 }}
           securityContext:
             readOnlyRootFilesystem: true
             privileged: false
