@@ -7,6 +7,8 @@ metadata:
     {{- include "project-template.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicas }}
+  serviceAccountName: {{ include "project-template.namespace" . }}-user
+  automountServiceAccountToken: false
   strategy:
     rollingUpdate:
       maxSurge: 1
