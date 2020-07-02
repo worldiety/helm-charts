@@ -9,4 +9,4 @@ spec:
   minAvailable: 1
   selector:
     matchLabels:
-      app: {{ .Values.name }}
+      {{- include "project-template.selectorLabels" . | nindent 6 }}
