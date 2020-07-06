@@ -82,17 +82,10 @@ autoscaling:
 #     memory: 32Mi
 
 
-# The livenessProbe can be used, to test the health of the web service
-# initialDelayseconds describe, that kubernetes should wait X seconds
-# before performing the first probe
-# periodSeconds describe, that kubernetes should perform a probe every X seconds
-# (OPTIONAL - default: livenessProbe isn't activ)
-
-# livenessProbe:
+# probes:
 #   path: /
 #   port: 8080
-#   initialDelaySeconds: 3
-#   periodSeconds: 5
+
 
 ################################################################################################
 ### DOCKER IMAGE

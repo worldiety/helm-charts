@@ -44,13 +44,19 @@ spec:
           {{ else }}
           image: {{ .Values.dockerhubImage }}
           {{ end }}
-          {{- if .Values.livenessProbe -}}
+          {{- if .Values.probes -}}
           livenessProbe:
             httpGet:
-              path: {{ .Values.livenessProbe.path }}
-              port: {{ .Values.livenessProbe.port }}
-            initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
-            periodSeconds: {{ .Values.livenessProbe.periodSeconds }}
+              path: {{ .Values.probes.path }}
+              port: {{ .Values.probes.port }}
+            failureThreshold: 1
+            periodSeconds: 10
+          startupProbe:
+            httpGet:
+              path: {{ .Values.probes.path }}
+              port: {{ .Values.probes.port }}
+            failureThreshold: 30
+            periodSeconds: 10
           {{ end }}
           # We do not need to specify a pullPolicy, because we want to use the default behaviour:
           # Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
