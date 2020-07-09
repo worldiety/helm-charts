@@ -19,8 +19,8 @@ spec:
       labels:
         {{- include "project-template.selectorLabels" . | nindent 8 }}
     spec:
-      #serviceAccountName: {{ include "project-template.namespace" . }}-user
-      #automountServiceAccountToken: false
+      serviceAccountName: {{ include "project-template.namespace" . }}-user
+      automountServiceAccountToken: false
       securityContext:
         runAsNonRoot: true
         runAsGroup: 1000
@@ -44,17 +44,17 @@ spec:
           {{ else }}
           image: {{ .Values.dockerhubImage }}
           {{ end }}
-          {{- if .Values.probes -}}
+          {{- if .Values.probe -}}
           livenessProbe:
             httpGet:
-              path: {{ .Values.probes.path }}
-              port: {{ .Values.probes.port }}
+              path: {{ .Values.probe.path }}
+              port: {{ .Values.probe.port }}
             failureThreshold: 1
             periodSeconds: 10
           startupProbe:
             httpGet:
-              path: {{ .Values.probes.path }}
-              port: {{ .Values.probes.port }}
+              path: {{ .Values.probe.path }}
+              port: {{ .Values.probe.port }}
             failureThreshold: 30
             periodSeconds: 10
           {{ end }}

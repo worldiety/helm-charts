@@ -82,7 +82,7 @@ autoscaling:
 #     memory: 32Mi
 
 
-# probes:
+# probe:
 #   path: /
 #   port: 8080
 
