@@ -44,6 +44,20 @@ spec:
           {{ else }}
           image: {{ .Values.dockerhubImage }}
           {{ end }}
+          {{- if .Values.probe -}}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.probe.path }}
+              port: {{ .Values.probe.port }}
+            failureThreshold: 1
+            periodSeconds: 10
+          startupProbe:
+            httpGet:
+              path: {{ .Values.probe.path }}
+              port: {{ .Values.probe.port }}
+            failureThreshold: 30
+            periodSeconds: 10
+          {{ end }}
           # We do not need to specify a pullPolicy, because we want to use the default behaviour:
           # Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
           # ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
