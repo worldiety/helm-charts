@@ -48,13 +48,13 @@ spec:
           livenessProbe:
             httpGet:
               path: {{ .Values.probe.path }}
-              port: {{ .Values.probe.port }}
+              port: {{ .Values.containerPort }}
             failureThreshold: 1
             periodSeconds: 10
           startupProbe:
             httpGet:
               path: {{ .Values.probe.path }}
-              port: {{ .Values.probe.port }}
+              port: {{ .Values.containerPort }}
             failureThreshold: 30
             periodSeconds: 10
           {{ end }}
