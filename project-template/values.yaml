@@ -84,12 +84,13 @@ autoscaling:
 
 # Define an endpoint (and port) through which a health check is provided.
 # This is used by Kubernetes to check when the service is available.
+# The port for the probe will be set automatically. It will be the same,
+# as the value of "containerPort".
 # More Information: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
 # (OPTIONAL - default: no liveness/startup probe)
 
 # probe:
 #   path: /
-#   port: 8080
 
 
 ################################################################################################
