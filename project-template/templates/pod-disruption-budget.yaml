@@ -6,7 +6,7 @@ metadata:
   labels:
     {{- include "project-template.labels" . | nindent 4 }}
 spec:
-  minAvailable: 1
+  maxUnavailable: 1
   selector:
     matchLabels:
       {{- include "project-template.selectorLabels" . | nindent 6 }}
