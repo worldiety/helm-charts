@@ -6,7 +6,16 @@ metadata:
   labels:
     {{- include "project-template.labels" . | nindent 4 }}
 spec:
+  # When there are more than 1 replica, we can ensure that there is always min. 1 replica available.
+  # In case we only have 1 replica, it is ok when this replica goes offline.
+  #
+  # HA setups should not use only 1 replica (https://revolgy.com/blog/kubernetes-in-production-poddisruptionbudget/).
+  # More Information: https://kubernetes.io/docs/tasks/run-application/configure-pdb/#specifying-a-poddisruptionbudget
+  {{ if gt .Values.replicas 1.0 }}
+  minAvailable: 1
+  {{ else }}
   maxUnavailable: 1
+  {{ end }}
   selector:
     matchLabels:
       {{- include "project-template.selectorLabels" . | nindent 6 }}
