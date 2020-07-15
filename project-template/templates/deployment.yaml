@@ -62,7 +62,8 @@ spec:
           # Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
           # ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
           #
-          #pullPolicy: IfNotPresent
+          # We want to always pull the image, because we might use dev/stage/prod as image tags, not only 'latest'
+          imagePullPolicy: Always
           volumeMounts:
             {{- if .Values.persistentVolumes -}}
             {{ range .Values.persistentVolumes }}
