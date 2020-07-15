@@ -33,7 +33,7 @@ example-1-helm-example-1.delta.k8s-wdy.de
 */}}
 {{- define "project-template.domain" -}}
 {{- $clusterdomain := "delta.k8s-wdy.de" -}}
-{{- printf "%s-%s.%s" .Values.name .Values.namespace $clusterdomain -}}
+{{- printf "%s-%s.%s" .Values.namespace .Values.name $clusterdomain -}}
 {{- end -}}
 
 {{/*
