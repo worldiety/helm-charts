@@ -27,8 +27,8 @@ Replaces the / in the namespace to an -.
 Project Domain
 
 Every application has its own unique domain {NAMESPACE}-{NAME}.{CLUSTER-DOMAIN}, e.g.:
-example-1-helm-example-1.delta.k8s-wdy.de
-^ NAME    ^ NAMESPACE    ^ CLUSTER-DOMAIN
+helm-example-1-example-1.delta.k8s-wdy.de
+^ NAMESPACE    ^ NAME    ^ CLUSTER-DOMAIN
 
 */}}
 {{- define "project-template.domain" -}}
