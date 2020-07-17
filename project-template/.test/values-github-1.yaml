@@ -14,42 +14,42 @@
 # This name will set to each object (deployment, service, ingress etc.) in the cluster, which is created by the chart.
 # Use this flag in the CI process:
 # 
-#    --set name=${CI_PROJECT_NAME}-${CI_ENVIRONMENT_SLUG}
+#    export NAMESPACE_PREFIX=$( echo "${CI_PROJECT_NAMESPACE}" | shasum -a 256 | cut -c1-7 )
+#    --set name=${NAMESPACE}
 # 
-# name: "exampleproject-prod"
+name: "example-1"
 
 
 # This field describes the contact person. The chart will automatically add an label named person to each object.
 # The value of the label "person" will be the value, which is written in the field 'contact -> name: ""'.
 
-# contact:
-#   name: "Alice Bob"
+contact:
+  name: "Alice"
 
 
 # This value is used, to define the namespace where the application will be deployed.
 # Property might be set in the ci process by using this flag: 
 # 
-#    export NAMESPACE_PREFIX=$( echo "${CI_PROJECT_NAMESPACE}" | shasum -a 256 | cut -c1-7 )
-#    --set namespace=${NAMESPACE_PREFIX}-${CI_PROJECT_NAME}
+#    --set namespace=${CI_PROJECT_NAMESPACE}-${CI_PROJECT_NAME}
 # 
 # ATTENTION: The current kubernetes-user/ci must have the read/write permissions for this namespace.
 
-# namespace: "helm-example-1"
+namespace: "helm-example-1"
 
 
 # Set the buildtype of the current deployment, e.g. dev, prod etc.
 # The buildtype must be provided in the ci process by using this flag:
 #
-#   --set buildtype=${CI_ENVIRONMENT_SLUG}
+#   --set buildtype=${CI_JOB_STAGE}
 #
-# buildtype: "prod"
+buildtype: "prod"
 
 
 # Number of replicas of the application.
 # Should be greater than 1 to ensure a disruption free service.
 # (OPTIONAL - default: 1) Defaults to 1 because there might be concurrency issues in the application.
 
-replicas: 1
+replicas: 2
 
 
 # Enable automatic scaling of the application.
@@ -57,11 +57,11 @@ replicas: 1
 # (OPTIONAL - default: autoscaling disabled)
 
 autoscaling:
-  enabled: false
-  # minReplicas: 1
-  # maxReplicas: 10
-  # targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
 
 
 # The following default resource limits will be applied by the namespace:
@@ -74,23 +74,13 @@ autoscaling:
 # 
 # You can change the default values, but you MUST talk to the DevOps team first.
 
-# resources:
-#   limits:
-#     memory: 512Mi
-#   requests:
-#     cpu: 10m
-#     memory: 32Mi
+resources:
+  limits:
+    memory: 512Mi
+  requests:
+    cpu: 10m
+    memory: 32Mi
 
-
-# Define an endpoint (and port) through which a health check is provided.
-# This is used by Kubernetes to check when the service is available.
-# The port for the probe will be set automatically. It will be the same,
-# as the value of "containerPort".
-# More Information: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
-# (OPTIONAL - default: no liveness/startup probe)
-
-# probe:
-#   path: /
 
 
 ################################################################################################
@@ -105,7 +95,7 @@ autoscaling:
 # Example: "syseleven/metakube-hello:1.0.0" for https://hub.docker.com/r/syseleven/metakube-hello
 # For more information: https://kubernetes.io/docs/concepts/containers/images/
 
-# dockerhubImage: "syseleven/metakube-hello:1.0.0"
+dockerhubImage: "syseleven/metakube-hello:1.0.0"
 
 
 # *** GITLAB DOCKER REGISTRY ***
@@ -114,7 +104,7 @@ autoscaling:
 # 
 #   --set gitlabImage.registry=${CI_REGISTRY}
 #   --set gitlabImage.repository=${CI_REGISTRY_IMAGE}
-#   --set gitlabImage.tag=${CI_ENVIRONMENT_SLUG}
+#   --set gitlabImage.tag=${CI_JOB_STAGE}
 #   --set gitlabImage.user=${CI_REGISTRY_USER}
 #   --set gitlabImage.password=${CI_REGISTRY_PASSWORD}
 # 
@@ -131,9 +121,9 @@ autoscaling:
 # Environment variables that should be available in the container.
 # (OPTIONAL - default: no environment variables available)
 
-# environmentVariables:
-#   USERNAME: "demo"
-#   PASSWORD: "demo"
+environmentVariables:
+  USERNAME: "TESTUSER"
+  PASSWORD: "TESTPASSWORD"
 
 
 # Port which will be used for traffic by the application.
@@ -161,10 +151,10 @@ containerPort: 8080
 # List of all persistent volumes of the application.
 # (OPTIONAL - default: no volume mounted)
 
-#persistentVolumes:
-#  - path: "/volume-mount-point-1"
-#    name: "test-volume-1"
-#    storageSize: 4
+persistentVolumes:
+ - path: "/volume-mount-point-1"
+   name: "test-volume-1"
+   storageSize: 4
 #  - path: "/volume-mount-point-2"
 #    name: "test-volume-2"
 #    storageSize: 0.5
@@ -205,10 +195,10 @@ servePublicly: true
 # Add domains after the creatation of CNAME records.
 # (OPTIONAL - default: no custom domain set)
 
-# customhosts:
-#   - host: "project.example.com"
-#     buildtype: prod
-#     tls: true
-#     paths:
-#       - path: "/"
-#         port: 80
+customhosts:
+  - host: "vapor-example.juliankahnert.de"
+    buildtype: prod
+    tls: true
+    paths:
+      - path: "/"
+        port: 80

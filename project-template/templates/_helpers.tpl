@@ -92,7 +92,7 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 wdy.app: {{ .Values.name }}
 wdy.contact: {{ .Values.contact.name | replace " " "_" }}
 wdy.ci.buildtype: {{ .Values.buildtype }}
-owner: wdy
+wdy.owner: wdy
 {{- end -}}
 
 {{/*

@@ -1,14 +1,15 @@
 {{ $contact := .Values.contact.name }}
+{{ $namespace := include "project-template.namespace" . }}
+{{ $labels := include "project-template.labels" . }}
 {{- if .Values.persistentVolumes -}}
-  {{- $contact := .Values.contact.name -}}
   {{ range .Values.persistentVolumes }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  namespace: {{ include "project-template.namespace" . }}
+  namespace: {{ $namespace }}
   name: {{ .name }}-folder
   labels:
-    {{- include "project-template.labels" . | nindent 4 }}
+    {{ $labels | nindent 4 }}
 spec:
   accessModes:
     - ReadWriteMany

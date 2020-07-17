@@ -1,0 +1,17 @@
+name: Helm Linting
+# This workflow is triggered on pushes to the repository.
+on: [push]
+
+jobs:
+  build:
+    # Job name is Greeting
+    name: Helm Linting
+    # This job runs on Linux
+    runs-on: ubuntu-latest
+    steps:
+      - name: Lint GitLab
+        uses: worldiety/k8s-deploy:latest
+        run: helm lint project-template -f project-template/.test/values-gitlab-1.yaml
+      - name: Lint GitHub
+        uses: worldiety/k8s-deploy:latest
+        run: helm lint project-template -f project-template/.test/values-gitlab-1.yaml
