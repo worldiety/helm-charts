@@ -71,6 +71,15 @@ We concatenate "TRUE" for every found domain.
 {{- end -}}
 
 {{/*
+Annotations
+*/}}
+{{- define "project-template.annotations" -}}
+# We use this annotation to enforce a regeneration of the pod.
+# Source: https://v3.helm.sh/docs/howto/charts_tips_and_tricks/#automatically-roll-deployments
+rollme: {{ randAlphaNum 5 | quote }}
+{{- end -}}
+
+{{/*
 Common labels
 */}}
 {{- define "project-template.labels" -}}
@@ -83,6 +92,7 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 wdy.app: {{ .Values.name }}
 wdy.contact: {{ .Values.contact.name | replace " " "_" }}
 wdy.ci.buildtype: {{ .Values.buildtype }}
+owner: wdy
 {{- end -}}
 
 {{/*
