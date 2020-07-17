@@ -10,8 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Lint GitLab
-        uses: worldiety/k8s-deploy:latest
+        image: worldiety/k8s-deploy:latest
         run: helm lint project-template -f project-template/.test/values-gitlab-1.yaml
       - name: Lint GitHub
-        uses: worldiety/k8s-deploy:latest
+        image: worldiety/k8s-deploy:latest
         run: helm lint project-template -f project-template/.test/values-gitlab-1.yaml
