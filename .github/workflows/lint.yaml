@@ -8,10 +8,9 @@ jobs:
     name: Helm Linting
     # This job runs on Linux
     runs-on: ubuntu-latest
+    container: worldiety/k8s-deploy:latest
     steps:
       - name: Lint GitLab
-        image: worldiety/k8s-deploy:latest
         run: helm lint project-template -f project-template/.test/values-gitlab-1.yaml
       - name: Lint GitHub
-        image: worldiety/k8s-deploy:latest
         run: helm lint project-template -f project-template/.test/values-gitlab-1.yaml
