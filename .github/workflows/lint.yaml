@@ -1,9 +1,9 @@
-name: Helm Linting
+name: Linting
 # This workflow is triggered on pushes to the repository.
 on: [push]
 
 jobs:
-  build:
+  helmlinting:
     # Job name is Greeting
     name: Helm Linting
     # This job runs on Linux
