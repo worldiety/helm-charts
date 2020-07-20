@@ -110,12 +110,12 @@ resources:
 # 
 #  These should not be set here!
 
-# gitlabImage:
-#   registry: "registry.example.com"
-#   repository: "registry.example.com/test/service"
-#   tag: "develop"
-#   user: "CHANGE-ME-PASSWORD"
-#   password: "CHANGE-ME-PASSWORD"
+gitlabImage:
+  registry: "registry.example.com"
+  repository: "registry.example.com/test/service"
+  tag: "develop"
+  user: "CHANGE-ME-PASSWORD"
+  password: "CHANGE-ME-PASSWORD"
 
 
 # Environment variables that should be available in the container.
