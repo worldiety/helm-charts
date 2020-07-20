@@ -12,7 +12,9 @@ metadata:
     {{ $labels | nindent 4 }}
 spec:
   accessModes:
-    - ReadWriteMany
+    # SysEleven OpenStack does not support ReadWriteMany
+    # - ReadWriteMany
+    - ReadWriteOnce
   resources:
     requests:
       storage: {{ .storageSize }}Gi

@@ -143,7 +143,7 @@ containerPort: 8080
 # ATTENTION: By default, the application has no write access to the file system.
 #
 # Every replica has its own set of non-persistent volumes, whereas all persistent volumes
-# will be shared between all replicas. E.g. the persistent Volumes have a ReadWriteMany access mode.
+# will be shared between all replicas. E.g. the persistent Volumes have a ReadWriteOnce access mode.
 # The unit is set by the chart. The unit is GB, e.g. storageSize: 0.5 equals 500 MB
 # All folders that are needed for write access MUST be specified below.
 
