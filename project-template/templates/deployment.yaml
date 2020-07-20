@@ -33,18 +33,10 @@ spec:
       {{ end }}
       containers:
         - name: {{ .Values.name }}
-          {{- if .Values.gitlabImage -}}
-          {{ $repo := .Values.gitlabImage.repository }}
-          {{ $tag := .Values.gitlabImage.tag }}
-          {{ $user := .Values.gitlabImage.user }}
-          {{ $passwd := .Values.gitlabImage.password }}
-          {{ if and (ne $repo "") (ne $tag "") }}
-          image: {{ .Values.gitlabImage.repository }}:{{ .Values.gitlabImage.tag }}
-          {{ else }}
+          {{- if .Values.dockerhubImage -}}
           image: {{ .Values.dockerhubImage }}
-          {{ end }}
           {{ else }}
-          image: {{ .Values.dockerhubImage }}
+          image: {{ printf "%s:%s" .Values.gitlabImage.repository .Values.gitlabImage.tag }}
           {{ end }}
           {{- if .Values.probe -}}
           livenessProbe:
