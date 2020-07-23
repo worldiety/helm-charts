@@ -1,14 +1,19 @@
 {{- $fullName := include "project-template.fullname" . -}}
+{{- $namespace := include "project-template.namespace" . -}}
+{{- $labels := include "project-template.labels" . -}}
 {{- $buildtype := .Values.buildtype -}}
 {{- $hasCustomDomains := contains ("TRUE") (include "project-template.filteredcustomdomains" .) -}}
 {{- if and (.Values.customhosts) (.Values.servePublicly) ($hasCustomDomains) -}}
+{{range .Values.customhosts }}
+{{- if eq .buildtype $buildtype -}}
+---
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  namespace: {{ include "project-template.namespace" . }}
-  name: {{ include "project-template.fullname" . }}-custom
+  namespace: {{ $namespace }}
+  name: {{ printf "%s-%s-custom" $fullName .host | replace "/" "-" | replace "." "-" }}
   labels:
-    {{- include "project-template.labels" . | nindent 4 }}
+    {{- $labels | nindent 4 }}
   annotations:
     nginx.ingress.kubernetes.io/proxy-body-size: "20m"
     cert-manager.io/cluster-issuer: letsencrypt-prod
@@ -16,16 +21,12 @@ spec:
   # CNAME records must exist for all custom hostnames
   tls:
     - hosts:
-      {{range .Values.customhosts }}
-        {{- if and (.tls) (eq .buildtype $buildtype) -}}
+        {{ if .tls -}}
         - {{ .host | quote }}
       secretName: {{ .host }}
-        {{- end -}}
-      {{ end }}
+        {{ end }}
 
   rules:
-    {{range .Values.customhosts }}
-    {{- if eq .buildtype $buildtype -}}
     - host: {{ .host | quote }}
       http:
         paths: {{ range .paths }}
@@ -34,7 +35,6 @@ spec:
               servicePort: {{ .port }}
               serviceName: {{ $fullName }}
           {{ end }}
-    {{ end }}
-    {{ end }}
-
+{{ end }}
+{{ end }}
 {{ end }}
