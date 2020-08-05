@@ -6,7 +6,10 @@ metadata:
 spec:
   podSelector:
     matchLabels:
-      {{- include "project-template.selectorLabels" . | nindent 6 }}
+  {{- include "project-template.selectorLabels" . | nindent 6 }}
   ingress:
+    # Allows incoming traffic from the ingress
+    - {}
+    # Deny the traffic from other namespaces
     - from:
         - podSelector: {}
