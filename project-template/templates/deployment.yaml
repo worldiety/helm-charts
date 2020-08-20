@@ -21,8 +21,8 @@ spec:
       annotations:
         {{- include "project-template.annotations" . | nindent 8 }}
     spec:
-      serviceAccountName: {{ include "project-template.namespace" . }}-user
-      automountServiceAccountToken: false
+      #serviceAccountName: {{ include "project-template.namespace" . }}-user
+      #automountServiceAccountToken: false
       securityContext:
         runAsNonRoot: true
         runAsGroup: 1000
