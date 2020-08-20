@@ -1,60 +1,23 @@
-# These are the default values for this chart.
-# You can change them to configure the chart for your application needs.
-# ATTENTION: Variable not marked as `(OPTIONAL)` MUST be set by the developer.
-
-
+################################################################################################
+### Dokumentation of possible values, see:
+###
+### https://github.com/worldiety/helm-charts/blob/master/project-template/README.md
+###################################################################################################
 
 ################################################################################################
 ### GENERAL
 ################################################################################################
 
+#name: "exampleproject-prod"
 
-# Here you can set an name for the object, which will created in the cluster.
-# It must be unique in a namespace.
-# This name will set to each object (deployment, service, ingress etc.) in the cluster, which is created by the chart.
-# Use this flag in the CI process:
-# 
-#    --set name=${CI_PROJECT_NAME}-${CI_ENVIRONMENT_SLUG}
-# 
-# name: "exampleproject-prod"
+#contact:
+#  name: "Alice Bob"
 
+#namespace: "helm-example-1"
 
-# This field describes the contact person. The chart will automatically add an label named person to each object.
-# The value of the label "person" will be the value, which is written in the field 'contact -> name: ""'.
-
-# contact:
-#   name: "Alice Bob"
-
-
-# This value is used, to define the namespace where the application will be deployed.
-# Property might be set in the ci process by using this flag: 
-# 
-#    export NAMESPACE_PREFIX=$( echo "${CI_PROJECT_NAMESPACE}" | shasum -a 256 | cut -c1-7 )
-#    --set namespace=${NAMESPACE_PREFIX}-${CI_PROJECT_NAME}
-# 
-# ATTENTION: The current kubernetes-user/ci must have the read/write permissions for this namespace.
-
-# namespace: "helm-example-1"
-
-
-# Set the buildtype of the current deployment, e.g. dev, prod etc.
-# The buildtype must be provided in the ci process by using this flag:
-#
-#   --set buildtype=${CI_ENVIRONMENT_SLUG}
-#
-# buildtype: "prod"
-
-
-# Number of replicas of the application.
-# Should be greater than 1 to ensure a disruption free service.
-# (OPTIONAL - default: 1) Defaults to 1 because there might be concurrency issues in the application.
+#buildtype: "prod"
 
 replicas: 1
-
-
-# Enable automatic scaling of the application.
-# More information: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
-# (OPTIONAL - default: autoscaling disabled)
 
 autoscaling:
   enabled: false
@@ -63,103 +26,39 @@ autoscaling:
   # targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
+#resources:
+#  limits:
+#    memory: 512Mi
+#  requests:
+#    cpu: 10m
+#    memory: 32Mi
 
-# The following default resource limits will be applied by the namespace:
-# 
-#    limits:
-#      memory: 512Mi
-#    requests:
-#      cpu: 10m
-#      memory: 32Mi
-# 
-# You can change the default values, but you MUST talk to the DevOps team first.
-
-# resources:
-#   limits:
-#     memory: 512Mi
-#   requests:
-#     cpu: 10m
-#     memory: 32Mi
-
-
-# Define an endpoint (and port) through which a health check is provided.
-# This is used by Kubernetes to check when the service is available.
-# The port for the probe will be set automatically. It will be the same,
-# as the value of "containerPort".
-# More Information: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
-# (OPTIONAL - default: no liveness/startup probe)
-
-# probe:
-#   path: /
+#probe:
+#  path: /
 
 
 ################################################################################################
 ### DOCKER IMAGE
 ################################################################################################
 
+#dockerhubImage: "syseleven/metakube-hello:1.0.0"
 
-# Choose ONE OF THE FOLLOWING docker registries (only one possible):
+#gitlabImage:
+#  registry: "registry.example.com"
+#  repository: "registry.example.com/test/service"
+#  tag: "develop"
+#  user: "CHANGE-ME-PASSWORD"
+#  password: "CHANGE-ME-PASSWORD"
 
-# *** DOCKER HUB ***
-# Image path from which the container image of the application should be fetched.
-# Example: "syseleven/metakube-hello:1.0.0" for https://hub.docker.com/r/syseleven/metakube-hello
-# For more information: https://kubernetes.io/docs/concepts/containers/images/
-
-# dockerhubImage: "syseleven/metakube-hello:1.0.0"
-
-
-# *** GITLAB DOCKER REGISTRY ***
-# If you want to use the docker image of this repository, you should use the following variables
-# in the CI process:
-# 
-#   --set gitlabImage.registry=${CI_REGISTRY}
-#   --set gitlabImage.repository=${CI_REGISTRY_IMAGE}
-#   --set gitlabImage.tag=${CI_ENVIRONMENT_SLUG}
-#   --set gitlabImage.user=${CI_REGISTRY_USER}
-#   --set gitlabImage.password=${CI_REGISTRY_PASSWORD}
-# 
-#  These should not be set here!
-
-# gitlabImage:
-#   registry: "registry.example.com"
-#   repository: "registry.example.com/test/service"
-#   tag: "develop"
-#   user: "CHANGE-ME-PASSWORD"
-#   password: "CHANGE-ME-PASSWORD"
-
-
-# Environment variables that should be available in the container.
-# (OPTIONAL - default: no environment variables available)
-
-# environmentVariables:
-#   USERNAME: "demo"
-#   PASSWORD: "demo"
-
-
-# Port which will be used for traffic by the application.
-# (OPTIONAL - default: 8080)
+#environmentVariables:
+#  USERNAME: "demo"
+#  PASSWORD: "demo"
 
 containerPort: 8080
-
-
 
 ################################################################################################
 ### VOLUMES
 ################################################################################################
-
-
-# Attach (non)persistent volumes to the application.
-# 
-# ATTENTION: By default, the application has no write access to the file system.
-#
-# Every replica has its own set of non-persistent volumes, whereas all persistent volumes
-# will be shared between all replicas. E.g. the persistent Volumes have a ReadWriteOnce access mode.
-# The unit is set by the chart. The unit is GB, e.g. storageSize: 0.5 equals 500 MB
-# All folders that are needed for write access MUST be specified below.
-
-# *** PERSISTENT VOLUMES ***
-# List of all persistent volumes of the application.
-# (OPTIONAL - default: no volume mounted)
 
 #persistentVolumes:
 #  - path: "/volume-mount-point-1"
@@ -169,46 +68,22 @@ containerPort: 8080
 #    name: "test-volume-2"
 #    storageSize: 0.5
 
-
-# *** NON-PERSISTENT VOLUMES ***
-# Non-persistent volumes will be deleted when the pod is killed, e.g. the application was stopped.
-# (OPTIONAL - default: Mount paths "/var/cache/nginx" and "/tmp")
-
 temporaryVolumes:
   - path: "/var/cache/nginx"
     name: "var-cache-nginx"
   - path: "/tmp"
     name: "tmp"
 
-
-
 ################################################################################################
 ### DOMAINS
 ################################################################################################
 
-# Set to false if the application should not be available from the internet. In this case all
-# of the following options will be ignored.
-# (OPTIONAL - default: true)
-
 servePublicly: true
 
-
-# Define the domains for your application.
-# 
-# Every application has its own unique domain {NAME}-{NAMESPACE}.{CLUSTER-DOMAIN}, e.g.:
-# example-1-helm-example-1.delta.k8s-wdy.de
-# ^ NAME    ^ NAMESPACE    ^ CLUSTER-DOMAIN
-# 
-# You can add custom hostnames for other domains, e.g.: project.example.com
-# 
-# Each of these hostnames must have a CNAME DNS record with the unique domain from above.
-# Add domains after the creatation of CNAME records.
-# (OPTIONAL - default: no custom domain set)
-
-# customhosts:
-#   - host: "project.example.com"
-#     buildtype: prod
-#     tls: true
-#     paths:
-#       - path: "/"
-#         port: 80
+#customhosts:
+#  - host: "project.example.com"
+#    buildtype: prod
+#    tls: true
+#    paths:
+#      - path: "/"
+#        port: 80
