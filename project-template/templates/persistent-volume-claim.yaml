@@ -1,13 +1,14 @@
 {{ $contact := .Values.contact.name }}
 {{ $namespace := include "project-template.namespace" . }}
 {{ $labels := include "project-template.labels" . }}
+{{ $buildType := .Values.buildtype }}
 {{- if .Values.persistentVolumes -}}
   {{ range .Values.persistentVolumes }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   namespace: {{ $namespace }}
-  name: {{ .name }}-folder
+  name: {{ .name }}-{{ $buildType }}-folder
   labels:
     {{ $labels | nindent 4 }}
 spec:

@@ -1,3 +1,4 @@
+{{ $buildType := .Values.buildtype }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -63,14 +64,14 @@ spec:
             {{- if .Values.persistentVolumes -}}
             {{ range .Values.persistentVolumes }}
             - mountPath: {{ .path }}
-              name: {{ .name }}-folder
+              name: {{ .name }}-{{ $buildType }}-folder
             {{ end }}
             {{ end }}
 
             {{- if .Values.temporaryVolumes -}}
             {{ range .Values.temporaryVolumes }}
             - mountPath: {{ .path }}
-              name: {{ .name }}-folder
+              name: {{ .name }}-{{ $buildType }}-folder
             {{ end }}
             {{ end }}
 
@@ -93,15 +94,15 @@ spec:
       volumes:
         {{- if .Values.persistentVolumes -}}
         {{ range .Values.persistentVolumes }}
-        - name: {{ .name }}-folder
+        - name: {{ .name }}-{{ $buildType }}-folder
           persistentVolumeClaim:
-            claimName: {{ .name }}-folder
+            claimName: {{ .name }}-{{ $buildType }}-folder
         {{ end }}
         {{ end }}
 
         {{- if .Values.temporaryVolumes -}}
         {{ range .Values.temporaryVolumes }}
-        - name: {{ .name }}-folder
+        - name: {{ .name }}-{{ $buildType }}-folder
           emptyDir: {}
         {{ end }}
         {{ end }}
