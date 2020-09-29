@@ -102,7 +102,17 @@ Following defaults are set already for the namespace.
         path: /
 
 > **OPTIONAL** - Default: no liveness/startup probe
+</dl>
 
+<dl>
+<dt><b>maxBodySize</b><dt>
+<dd>Set to size of maximum allowed client body size for uploads. Please keep in 
+mind that huge uploads require temporary buffering of the file by the proxy if 
+not directly streamed to the backend.
+
+    maxBodySize: "1g"
+
+> **OPTIONAL** - Default: not set
 </dl>
 
 ### Docker image
