@@ -6,6 +6,10 @@ metadata:
   name: {{ include "project-template.fullname" . }}
   labels:
     {{- include "project-template.labels" . | nindent 4 }}
+  annotations:
+{{ if .Values.maxBodySize }}
+    nginx.ingress.kubernetes.io/proxy-body-size: {{ .Values.maxBodySize | quote }}
+{{ end }}
 spec:
   tls:
     - hosts:
