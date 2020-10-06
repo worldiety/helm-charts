@@ -2,6 +2,7 @@
 {{- $namespace := include "project-template.namespace" . -}}
 {{- $labels := include "project-template.labels" . -}}
 {{- $buildtype := .Values.buildtype -}}
+{{- $maxBodySize := .Values.maxBodySize -}}
 {{- $hasCustomDomains := contains ("TRUE") (include "project-template.filteredcustomdomains" .) -}}
 {{- if and (.Values.customhosts) (.Values.servePublicly) ($hasCustomDomains) -}}
 {{range .Values.customhosts }}
@@ -16,8 +17,8 @@ metadata:
     {{- $labels | nindent 4 }}
   annotations:
   annotations:
-{{ if .Values.maxBodySize }}
-    nginx.ingress.kubernetes.io/proxy-body-size: {{ .Values.maxBodySize | quote }}
+{{ if $maxBodySize }}
+    nginx.ingress.kubernetes.io/proxy-body-size: {{ $maxBodySize | quote }}
 {{ end }}
     cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
