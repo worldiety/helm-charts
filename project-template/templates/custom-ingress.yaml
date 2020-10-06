@@ -15,7 +15,10 @@ metadata:
   labels:
     {{- $labels | nindent 4 }}
   annotations:
-    nginx.ingress.kubernetes.io/proxy-body-size: "20m"
+  annotations:
+{{ if .Values.maxBodySize }}
+    nginx.ingress.kubernetes.io/proxy-body-size: {{ .Values.maxBodySize | quote }}
+{{ end }}
     cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   # CNAME records must exist for all custom hostnames
