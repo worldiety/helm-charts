@@ -91,15 +91,15 @@ Following defaults are set already for the namespace.
 > **NOTE** - If you need to change them, you MUST talk to the DevOps team first.
 
 <dt><b>probe</b><dt>
-<dd>Defines an endpoint (and port) through which a health check is provided.
+<dd>Defines an endpoint through which a health check is provided.
  This is used by Kubernetes to check when the service is available.
- The port for the probe will be set automatically. It will be the same,
- as the value of "containerPort".
+ The port for the probe will be set automatically to 'http' if not defined.
 
  More Information: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
 
     probe:
         path: /
+        port: http
 
 > **OPTIONAL** - Default: no liveness/startup probe
 </dl>
@@ -157,13 +157,38 @@ For more information: https://kubernetes.io/docs/concepts/containers/images/
 
  
 <dt><b>containerPort</b><dt>
-<dd>Port which will be used for traffic by the application.
+<dd> 
+
+> **DEPRECATED**, see `ports`. 
+
+Port which will be used for traffic by the application.
+
 
     containerPort: 8080
 
 > **OPTIONAL** - Default: 8080
 
 </dl>
+
+<dt><b>ports</b><dt>
+<dd>Defines exposed and usable ports by the application. Keep in mind that only port 80 can be made public available for now, 
+others are only available within the cluster or via port forwarding.
+
+    ports:
+        http:
+            container: 8080
+            service: 80
+        mysql:
+            container: 3306
+            service: 3306
+        metrics:
+            container: 10095
+            service: 10095
+
+> **OPTIONAL** - Default: container port 8080 mapped to service port 80
+
+</dl>
+
 
 ### Volumes
 

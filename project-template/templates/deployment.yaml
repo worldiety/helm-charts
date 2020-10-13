@@ -44,13 +44,21 @@ spec:
           livenessProbe:
             httpGet:
               path: {{ .Values.probe.path }}
+              {{ if .Values.probe.port }}
+              port: {{ .Values.probe.port }}
+              {{ else }}
               port: {{ .Values.containerPort }}
+              {{ end }}
             failureThreshold: 1
             periodSeconds: 10
           startupProbe:
             httpGet:
               path: {{ .Values.probe.path }}
+              {{ if .Values.probe.port }}
+              port: {{ .Values.probe.port }}
+              {{ else }}
               port: {{ .Values.containerPort }}
+              {{ end }}
             failureThreshold: 30
             periodSeconds: 10
           {{ end }}
@@ -76,8 +84,15 @@ spec:
             {{ end }}
 
           ports:
+            {{- if .Values.containerPort -}}
             - containerPort: {{ .Values.containerPort }}
               name: http
+            {{ else }}
+            {{ range $key, $val := .Values.ports }}
+            - containerPort: {{ $val.container }}
+              name: {{ $key }}
+            {{ end }}
+            {{ end }}
           resources:
             {{- if .Values.resources -}}
             {{- toYaml .Values.resources | nindent 12 }}
