@@ -8,18 +8,18 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    {{- if .Values.containerPort -}}
+    {{- if .Values.containerPort }}
     - name: http
       port: 80
       targetPort: http
       protocol: TCP
-    {{ else }}
-    {{ range $key, $val := .Values.ports }}
+    {{- else }}
+    {{- range $key, $val := .Values.ports }}
     - name: {{ $key }}
       port: {{ $val.service }}
       targetPort: {{ $key }}
       protocol: TCP
-    {{ end }}
-    {{ end }}
+    {{- end }}
+    {{- end }}
   selector:
     {{- include "project-template.selectorLabels" . | nindent 8 }}

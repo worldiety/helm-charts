@@ -16,19 +16,18 @@ metadata:
   labels:
     {{- $labels | nindent 4 }}
   annotations:
-  annotations:
-{{ if $maxBodySize }}
+{{- if $maxBodySize }}
     nginx.ingress.kubernetes.io/proxy-body-size: {{ $maxBodySize | quote }}
-{{ end }}
+{{- end }}
     cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   # CNAME records must exist for all custom hostnames
   tls:
     - hosts:
-        {{ if .tls -}}
+        {{- if .tls }}
         - {{ .host | quote }}
       secretName: {{ .host }}
-        {{ end }}
+        {{- end }}
 
   rules:
     - host: {{ .host | quote }}

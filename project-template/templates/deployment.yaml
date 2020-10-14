@@ -29,36 +29,36 @@ spec:
         runAsGroup: 1000
         runAsUser: 1000
         fsGroup: 1000
-      {{ if .Values.gitlabImage }}
+      {{- if .Values.gitlabImage }}
       imagePullSecrets:
         - name: {{ include "project-template.image-pull-secret-name" . }}
-      {{ end }}
+      {{- end }}
       containers:
         - name: {{ .Values.name }}
-          {{ if .Values.dockerhubImage }}
+          {{- if .Values.dockerhubImage }}
           image: {{ .Values.dockerhubImage | quote }}
-          {{ else }}
+          {{- else }}
           image: {{ printf "%s:%s" .Values.gitlabImage.repository .Values.gitlabImage.tag }}
-          {{ end }}
-          {{- if .Values.probe -}}
+          {{- end }}
+          {{- if .Values.probe }}
           livenessProbe:
             httpGet:
               path: {{ .Values.probe.path }}
-              {{ if .Values.probe.port }}
+              {{- if .Values.probe.port }}
               port: {{ .Values.probe.port }}
-              {{ else }}
+              {{- else }}
               port: {{ .Values.containerPort }}
-              {{ end }}
+              {{- end }}
             failureThreshold: 1
             periodSeconds: 10
           startupProbe:
             httpGet:
               path: {{ .Values.probe.path }}
-              {{ if .Values.probe.port }}
+              {{- if .Values.probe.port }}
               port: {{ .Values.probe.port }}
-              {{ else }}
+              {{- else }}
               port: {{ .Values.containerPort }}
-              {{ end }}
+              {{- end }}
             failureThreshold: 30
             periodSeconds: 10
           {{ end }}
@@ -69,34 +69,32 @@ spec:
           # We want to always pull the image, because we might use dev/stage/prod as image tags, not only 'latest'
           imagePullPolicy: Always
           volumeMounts:
-            {{- if .Values.persistentVolumes -}}
-            {{ range .Values.persistentVolumes }}
+            {{- if .Values.persistentVolumes }}
+            {{- range .Values.persistentVolumes }}
             - mountPath: {{ .path }}
               name: {{ .name }}-{{ $buildType }}-folder
-            {{ end }}
-            {{ end }}
-
+            {{- end }}
+            {{- end }}
             {{- if .Values.temporaryVolumes -}}
-            {{ range .Values.temporaryVolumes }}
+            {{- range .Values.temporaryVolumes }}
             - mountPath: {{ .path }}
               name: {{ .name }}-{{ $buildType }}-folder
-            {{ end }}
-            {{ end }}
-
+            {{- end }}
+            {{- end }}
           ports:
-            {{- if .Values.containerPort -}}
+            {{- if .Values.containerPort }}
             - containerPort: {{ .Values.containerPort }}
               name: http
-            {{ else }}
-            {{ range $key, $val := .Values.ports }}
+            {{- else }}
+            {{- range $key, $val := .Values.ports }}
             - containerPort: {{ $val.container }}
               name: {{ $key }}
-            {{ end }}
-            {{ end }}
+            {{- end }}
+            {{- end }}
           resources:
             {{- if .Values.resources -}}
             {{- toYaml .Values.resources | nindent 12 }}
-            {{ end }}
+            {{- end }}
           env:            
           {{- include "project-template.environment-variables-list" . | indent 12 }}
           securityContext:
@@ -113,7 +111,7 @@ spec:
           persistentVolumeClaim:
             claimName: {{ .name }}-{{ $buildType }}-folder
         {{ end }}
-        {{ end }}
+        {{- end }}
 
         {{- if .Values.temporaryVolumes -}}
         {{ range .Values.temporaryVolumes }}
