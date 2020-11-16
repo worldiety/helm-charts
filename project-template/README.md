@@ -19,9 +19,9 @@ found within this repository.
 This section describes the values that could or must be overwritten by your project. Most of these
 values do not need to be changed or will be already applied if you are using the default CI pipeline.
 
-<dl>
-<dt><b>name</b><dt>
-<dd>Set a name for the object, which will be deployed to the cluster. It must be unique within a namespace. This name will applied to each object (deployment, service, ingress etc.) in the cluster, which is created by the chart.
+#### name
+
+Set a name for the object, which will be deployed to the cluster. It must be unique within a namespace. This name will applied to each object (deployment, service, ingress etc.) in the cluster, which is created by the chart.
 
     name: "exampleproject-prod"
 
@@ -29,14 +29,16 @@ values do not need to be changed or will be already applied if you are using the
  
     --set name=${CI_PROJECT_NAME}-${CI_ENVIRONMENT_SLUG}
 
-<dt><b>contact</b><dt>
-<dd>Describes the contact person. The chart will automatically add a label named person to each object. This should always be defined by your project.
+#### contact
+
+Describes the contact person. The chart will automatically add a label named person to each object. This should always be defined by your project.
 
     contact:
         name: "Alice Henderson"
 
-<dt><b>namespace</b><dt>
-<dd>Defines the namespace where the application should be deployed.
+#### namespace
+
+Defines the namespace where the application should be deployed.
 
     namespace: "helm-example-1"
 
@@ -47,8 +49,9 @@ values do not need to be changed or will be already applied if you are using the
  
 > ATTENTION: The current kubernetes-user/ci must have the read/write permissions for this namespace.
 
-<dt><b>buildtype</b><dt>
-<dd>Set the buildtype of the current deployment, e.g. dev, prod etc.
+#### buildtype
+
+Set the buildtype of the current deployment, e.g. dev, prod etc.
 
     buildtype: "prod"
 
@@ -56,15 +59,17 @@ values do not need to be changed or will be already applied if you are using the
 
     --set buildtype=${CI_ENVIRONMENT_SLUG}
 
-<dt><b>replicas</b><dt>
-<dd>Number of replicas of the application. Should be greater than 1 to ensure a disruption free service. 
+#### replicas
+
+Number of replicas of the application. Should be greater than 1 to ensure a disruption free service.
 
     replicas: 1
     
 > **OPTIONAL** - Defaults to 1 because there might be concurrency issues in the application.
 
-<dt><b>autoscaling</b><dt>
-<dd>Enable automatic scaling of the application. 
+#### autoscaling
+
+Enable automatic scaling of the application.
 
 More information: https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/
 
@@ -77,8 +82,9 @@ More information: https://kubernetes.io/docs/tasks/run-application/horizontal-po
     
 > **OPTIONAL** - Default: autoscaling disabled
 
-<dt><b>resources</b><dt>
-<dd>Defines resource limits. 
+#### resources
+
+Defines resource limits.
 Following defaults are set already for the namespace.
 
          resources:
@@ -90,8 +96,8 @@ Following defaults are set already for the namespace.
 
 > **NOTE** - If you need to change them, you MUST talk to the DevOps team first.
 
-<dt><b>probe</b><dt>
-<dd>Defines an endpoint through which a health check is provided.
+#### probe
+Defines an endpoint through which a health check is provided.
  This is used by Kubernetes to check when the service is available.
  The port for the probe will be set automatically to 'http' if not defined.
 
@@ -102,34 +108,33 @@ Following defaults are set already for the namespace.
         port: http
 
 > **OPTIONAL** - Default: no liveness/startup probe
-</dl>
 
-<dl>
-<dt><b>maxBodySize</b><dt>
-<dd>Set to size of maximum allowed client body size for uploads. Please keep in 
-mind that huge uploads require temporary buffering of the file by the proxy if 
-not directly streamed to the backend.
+#### maxBodySize
+
+Set to size of maximum allowed client body size for uploads. Please keep in
+mind that huge uploads require temporary buffering of the file by the proxy if
+not directly streamed to the backend. Values can be something like `1g` (1000MB)
+or `32m` (32MB). More information can befound in the [nginx readme](https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/nginx-configuration/annotations.md#custom-max-body-size).
 
     maxBodySize: "1g"
 
 > **OPTIONAL** - Default: not set
-</dl>
 
 ### Docker image
 
 The following configurations are only necessary, if you do not use the default CI deployment process.
 Otherwise just ignore.
 
-<dl>
-<dt><b>dockerhubImage</b><dt>
-<dd>The image that should be pulled from Docker Hub.
+#### dockerhubImage
+
+The image that should be pulled from Docker Hub.
 
 For more information: https://kubernetes.io/docs/concepts/containers/images/
 
     dockerhubImage: "syseleven/metakube-hello:1.0.0"
 
-<dt><b>gitlabImage</b><dt>
-<dd>The image that should be pulled from GitLab.
+#### gitlabImage
+The image that should be pulled from GitLab.
 
     gitlabImage:
        registry: "registry.example.com"
@@ -146,8 +151,8 @@ For more information: https://kubernetes.io/docs/concepts/containers/images/
     --set gitlabImage.user=${CI_REGISTRY_USER}
     --set gitlabImage.password=${CI_REGISTRY_PASSWORD}
  
-<dt><b>environmentVariables</b><dt>
-<dd>Environment variables that should be available in the container.
+#### environmentVariables
+Environment variables that should be available in the container.
 
     environmentVariables:
       USERNAME: "demo"
@@ -156,10 +161,9 @@ For more information: https://kubernetes.io/docs/concepts/containers/images/
 > **OPTIONAL** - Default: no environment variables available)
 
  
-<dt><b>containerPort</b><dt>
-<dd> 
+#### containerPort
 
-> **DEPRECATED**, see `ports`. 
+> **DEPRECATED**, see `ports`.
 
 Port which will be used for traffic by the application.
 
@@ -168,10 +172,9 @@ Port which will be used for traffic by the application.
 
 > **OPTIONAL** - Default: 8080
 
-</dl>
 
-<dt><b>ports</b><dt>
-<dd>Defines exposed and usable ports by the application. Keep in mind that only port 80 can be made public available for now, 
+#### ports
+Defines exposed and usable ports by the application. Keep in mind that only port 80 can be made public available for now,
 others are only available within the cluster or via port forwarding.
 
     ports:
@@ -187,13 +190,11 @@ others are only available within the cluster or via port forwarding.
 
 > **OPTIONAL** - Default: container port 8080 mapped to service port 80
 
-</dl>
-
 
 ### Volumes
 
 Volumes are only necessary if your application needs specific write access to the file system,
-e.g. for caching or similar. 
+e.g. for caching or similar.
 
 > **ATTENTION** - By default, the application has no write access to the file system.
 
@@ -202,9 +203,8 @@ will be shared between all replicas. E.g. the persistent Volumes have a ReadWrit
 The unit is set by the chart. The unit is GB, e.g. storageSize: 0.5 equals 500 MB
 All folders that are needed for write access MUST be specified below.
 
-<dl>
-<dt><b>persistentVolumes</b><dt>
-<dd>List of all persistent volumes of the application.
+#### persistentVolumes
+List of all persistent volumes of the application.
 
     persistentVolumes:
       - path: "/volume-mount-point-1"
@@ -216,8 +216,8 @@ All folders that are needed for write access MUST be specified below.
 
 > **OPTIONAL** - Default: no volume mounted
 
-<dt><b>temporaryVolumes</b><dt>
-<dd>Non-persistent volumes will be deleted when the pod is killed, e.g. the application was stopped.
+#### temporaryVolumes
+Non-persistent volumes will be deleted when the pod is killed, e.g. the application was stopped.
 
     temporaryVolumes:
       - path: "/var/cache/nginx"
@@ -227,21 +227,19 @@ All folders that are needed for write access MUST be specified below.
 
 > **OPTIONAL** - Default: Mount paths "/var/cache/nginx" and "/tmp"
 
-</dl>
 
 ### Domains
 
-<dl>
-<dt><b>servePublicly</b><dt>
-<dd>Set to false if the application should not be available from the internet. In this case all
+#### servePublicly
+Set to false if the application should not be available from the internet. In this case all
 of the following options will be ignored.
 
     servePublicly: true
 
 > **OPTIONAL** - Default: true
 
-<dt><b>customhosts</b><dt>
-<dd>Every application has its own unique domain {NAME}-{NAMESPACE}.{CLUSTER-DOMAIN}, e.g.:
+#### customhosts
+Every application has its own unique domain {NAME}-{NAMESPACE}.{CLUSTER-DOMAIN}, e.g.:
 
     example-1-helm-example-1.delta.k8s-wdy.de
 
@@ -259,5 +257,3 @@ Add domains after the creation of CNAME records.
             port: 80
 
 > **OPTIONAL** - Default: no custom domain set
-
-</dl>
