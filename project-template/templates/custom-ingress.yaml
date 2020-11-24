@@ -1,9 +1,20 @@
 {{- $fullName := include "project-template.fullname" . -}}
 {{- $namespace := include "project-template.namespace" . -}}
 {{- $labels := include "project-template.labels" . -}}
+{{- $noIndexingAndNoFollow := include "project-template.noindexandnofollow" . -}}
 {{- $buildtype := .Values.buildtype -}}
 {{- $maxBodySize := .Values.maxBodySize -}}
 {{- $hasCustomDomains := contains ("TRUE") (include "project-template.filteredcustomdomains" .) -}}
+
+{{- $noIndexingAnnotation := false -}}
+{{- if .Values.noIndexingOnBuildtype -}}
+{{ range $val := .Values.noIndexingOnBuildtype }}
+{{- if eq $val $buildtype -}}
+{{- $noIndexingAnnotation = true -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
 {{- if and (.Values.customhosts) (.Values.servePublicly) ($hasCustomDomains) -}}
 {{range .Values.customhosts }}
 {{- if eq .buildtype $buildtype -}}
@@ -16,6 +27,9 @@ metadata:
   labels:
     {{- $labels | nindent 4 }}
   annotations:
+  {{- if $noIndexingAnnotation -}}
+    {{- $noIndexingAndNoFollow | nindent 4 -}}
+  {{- end -}}
 {{- if $maxBodySize }}
     nginx.ingress.kubernetes.io/proxy-body-size: {{ $maxBodySize | quote }}
 {{- end }}

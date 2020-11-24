@@ -80,6 +80,14 @@ rollme: {{ randAlphaNum 5 | quote }}
 {{- end -}}
 
 {{/*
+Annotations for noindex and nofollow
+*/}}
+{{- define "project-template.noindexandnofollow" -}}
+nginx.ingress.kubernetes.io/server-snippet: |-
+      add_header X-Robots-Tag "noindex, nofollow";
+{{- end -}}
+
+{{/*
 Common labels
 */}}
 {{- define "project-template.labels" -}}
