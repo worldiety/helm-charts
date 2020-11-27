@@ -257,3 +257,14 @@ Add domains after the creation of CNAME records.
             port: 80
 
 > **OPTIONAL** - Default: no custom domain set
+
+#### noIndexingOnBuildtype:
+Every application with a host would be crawled by the search robots and then it would be
+displayed on the search results.<br>
+To disallow these crawling, you can uncomment this section inside your deployment-values.yaml
+and add the buildtype's for the stages, where the crawling should be disabled.
+
+    noIndexingOnBuildtype:
+      - dev
+      
+> **OPTIONAL** - Default: Crawling on each stage      
