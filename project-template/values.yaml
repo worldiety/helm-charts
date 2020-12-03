@@ -100,3 +100,6 @@ servePublicly: true
 #    paths:
 #      - path: "/"
 #        port: 80
+
+#noIndexingOnBuildtype:
+#  - dev
