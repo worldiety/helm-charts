@@ -29,7 +29,7 @@ spec:
         spec:
           containers:
           - name: {{ include "project-template.fullname" . }}-{{ $buildtype }}-mysql-scp-backup
-            image: worldiety/mysql-scp-backup:0.0.3
+            image: worldiety/mysql-scp-backup:0.0.4
             volumeMounts:
             - mountPath: /tmp
               name: {{ include "project-template.fullname" . }}-{{ $buildtype }}-cronjob-tmp-folder
