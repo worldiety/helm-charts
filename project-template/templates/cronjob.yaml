@@ -35,6 +35,7 @@ spec:
               name: {{ include "project-template.fullname" . }}-{{ $buildtype }}-cronjob-tmp-folder
             imagePullPolicy: IfNotPresent
             env:
+            # all contiguration options can be found: https://github.com/worldiety/mysql-scp-backup
             - name: DB_HOST
               # value: SERVICE.NAMESPACE.svc.cluster.local
               value: {{ include "project-template.fullname" . }}.{{ include "project-template.namespace" . }}.svc.cluster.local
@@ -51,6 +52,8 @@ spec:
               value: {{ .Values.mysqlBackup.dbNames }}
             - name: SERVICE_NAME
               value: {{ include "project-template.fullname" . }}
+            - name: TEMP_LOCATION
+              value: /tmp
             - name: BACKUPS_TO_KEEP
               value: {{ .Values.mysqlBackup.backupsToKeep }}
             - name: SSH_STORAGE_URL
