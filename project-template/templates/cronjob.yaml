@@ -29,7 +29,7 @@ spec:
               {{- include "project-template.selectorLabels" . | nindent 14 }}
           containers:
           - name: {{ include "project-template.fullname" . }}-{{ $buildtype }}-mysql-scp-backup
-            image: worldiety/mysql-scp-backup:0.0.2
+            image: worldiety/mysql-scp-backup:0.0.3
             volumeMounts:
             - mountPath: /tmp
               name: {{ include "project-template.fullname" . }}-{{ $buildtype }}-cronjob-tmp-folder

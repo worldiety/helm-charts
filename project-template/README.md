@@ -280,7 +280,7 @@ If set a [k8s CronJob](https://kubernetes.io/docs/concepts/workloads/controllers
 It will backup each database and sends the backup to the `sshStorageUrl`.
 
 The [mysql-scp-backup](https://github.com/worldiety/mysql-scp-backup) Docker Container will be used in this cronjob.
-You use [this script](https://github.com/worldiety/mysql-scp-backup/blob/main/create-key.sh) to create a new ssh keypair and persist it on your storage provider.
+You use [this script](https://github.com/worldiety/mysql-scp-backup/blob/main/create-keys.sh) to create a new ssh keypair and persist it on your storage provider.
 
     mysqlBackup:
       # cron string: https://crontab.guru/#30_4_*_*_*
