@@ -14,7 +14,7 @@ apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
   namespace: {{ include "project-template.namespace" . }}
-  name: {{ include "project-template.fullname" . }}-{{ $buildtype }}-mysql-scp-backup
+  name: {{ .Values.name | replace "ä" "ae" |replace "ö" "oe" | replace "ü" "ue" }}-mysql-backup
 spec:
   schedule: "{{ .Values.mysqlBackup.schedule }}"
   concurrencyPolicy: Forbid
@@ -23,10 +23,10 @@ spec:
   jobTemplate:
     spec:
       template:
+        metadata:
+          labels:
+            {{- include "project-template.selectorLabels" . | nindent 14 }}
         spec:
-          metadata:
-            labels:
-              {{- include "project-template.selectorLabels" . | nindent 14 }}
           containers:
           - name: {{ include "project-template.fullname" . }}-{{ $buildtype }}-mysql-scp-backup
             image: worldiety/mysql-scp-backup:0.0.3
@@ -35,18 +35,18 @@ spec:
               name: {{ include "project-template.fullname" . }}-{{ $buildtype }}-cronjob-tmp-folder
             imagePullPolicy: IfNotPresent
             env:
-            # all contiguration options can be found: https://github.com/worldiety/mysql-scp-backup
+            # all configuration options can be found: https://github.com/worldiety/mysql-scp-backup
             - name: DB_HOST
               # value: SERVICE.NAMESPACE.svc.cluster.local
               value: {{ include "project-template.fullname" . }}.{{ include "project-template.namespace" . }}.svc.cluster.local
             - name: DB_PORT
-              value: {{ .Values.mysqlBackup.dbPort }}
+              value: "{{ .Values.mysqlBackup.dbPort }}"
             - name: DB_USER
               value: {{ .Values.mysqlBackup.dbUser }}
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "project-template.environment-variables-secret-name" . }}
+                  name: {{ include "project-template.cronjob-environment-variables-secret-name" . }}
                   key: DB_PASSWORD
             - name: DB_NAMES
               value: {{ .Values.mysqlBackup.dbNames }}
@@ -55,18 +55,18 @@ spec:
             - name: TEMP_LOCATION
               value: /tmp
             - name: BACKUPS_TO_KEEP
-              value: {{ .Values.mysqlBackup.backupsToKeep }}
+              value: "{{ .Values.mysqlBackup.backupsToKeep }}"
             - name: SSH_STORAGE_URL
               value: {{ .Values.mysqlBackup.sshStorageUrl }}
             - name: SSH_BASE64_PRIVATE_KEY
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "project-template.environment-variables-secret-name" . }}
+                  name: {{ include "project-template.cronjob-environment-variables-secret-name" . }}
                   key: SSH_BASE64_PRIVATE_KEY
             - name: SSH_BASE64_PUBLIC_KEY
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "project-template.environment-variables-secret-name" . }}
+                  name: {{ include "project-template.cronjob-environment-variables-secret-name" . }}
                   key: SSH_BASE64_PUBLIC_KEY
           restartPolicy: OnFailure
           volumes:
