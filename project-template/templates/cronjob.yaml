@@ -1,0 +1,74 @@
+{{- $buildtype := .Values.buildtype -}}
+{{- $shouldCreateCronJob := true -}}
+{{- if .Values.mysqlBackup -}}
+{{ range $val := .Values.mysqlBackup.skipBackupOnBuildTypes }}
+{{- if eq $val $buildtype -}}
+{{- $shouldCreateCronJob = false -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{- if and (.Values.mysqlBackup) ($shouldCreateCronJob) -}}
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  namespace: {{ include "project-template.namespace" . }}
+  name: {{ include "project-template.fullname" . }}-{{ $buildtype }}-mysql-scp-backup
+spec:
+  schedule: "{{ .Values.mysqlBackup.schedule }}"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          metadata:
+            labels:
+              {{- include "project-template.selectorLabels" . | nindent 14 }}
+          containers:
+          - name: {{ include "project-template.fullname" . }}-{{ $buildtype }}-mysql-scp-backup
+            image: worldiety/mysql-scp-backup:0.0.2
+            volumeMounts:
+            - mountPath: /tmp
+              name: {{ include "project-template.fullname" . }}-{{ $buildtype }}-cronjob-tmp-folder
+            imagePullPolicy: IfNotPresent
+            env:
+            - name: DB_HOST
+              # value: SERVICE.NAMESPACE.svc.cluster.local
+              value: {{ include "project-template.fullname" . }}.{{ include "project-template.namespace" . }}.svc.cluster.local
+            - name: DB_PORT
+              value: {{ .Values.mysqlBackup.dbPort }}
+            - name: DB_USER
+              value: {{ .Values.mysqlBackup.dbUser }}
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "project-template.environment-variables-secret-name" . }}
+                  key: DB_PASSWORD
+            - name: DB_NAMES
+              value: {{ .Values.mysqlBackup.dbNames }}
+            - name: SERVICE_NAME
+              value: {{ include "project-template.fullname" . }}
+            - name: BACKUPS_TO_KEEP
+              value: {{ .Values.mysqlBackup.backupsToKeep }}
+            - name: SSH_STORAGE_URL
+              value: {{ .Values.mysqlBackup.sshStorageUrl }}
+            - name: SSH_BASE64_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "project-template.environment-variables-secret-name" . }}
+                  key: SSH_BASE64_PRIVATE_KEY
+            - name: SSH_BASE64_PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "project-template.environment-variables-secret-name" . }}
+                  key: SSH_BASE64_PUBLIC_KEY
+          restartPolicy: OnFailure
+          volumes:
+            - name: {{ include "project-template.fullname" . }}-{{ $buildtype }}-cronjob-tmp-folder
+              emptyDir: {}
+      # Specifies the number of retries before marking this job failed.
+      backoffLimit: 5
+{{ end }}
