@@ -15,7 +15,7 @@
 
 #namespace: "helm-example-1"
 
-#buildtype: "prod"
+#buildtype: "dev"
 
 replicas: 1
 
@@ -103,3 +103,20 @@ servePublicly: true
 
 #noIndexingOnBuildtype:
 #  - dev
+
+# mysqlBackup:
+#   schedule: "*/1 * * * *"
+#   # for mysql 5.7 this might be changed according to: https://github.com/worldiety/mysql-scp-backup
+#   containerImageTag: "0.0.5"
+#   # db host will be created: SERVICE.NAMESPACE.svc.cluster.local
+#   dbPort: 3306
+#   dbUser: backup
+#   dbPassword: "${DB_PASSWORD}"
+#   dbNames: database1,database2
+#   backupsToKeep: 2
+#   sshStorageUrl: USER@USER.your-storagebox.de
+#   sshBase64PrivateKey: "${SSH_BASE64_PRIVATE_KEY}"
+#   sshBase64PPublicKey: "${SSH_BASE64_PUBLIC_KEY}"
+#   skipBackupOnBuildTypes:
+#     - dev
+#     - stage

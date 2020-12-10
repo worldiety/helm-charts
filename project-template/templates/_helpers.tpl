@@ -132,3 +132,11 @@ List of environment variables.
       key: {{ $key }}
 {{- end}}
 {{- end }}
+
+{{/*
+Creates the cronjob env vars secret name.
+*/}}
+{{- define "project-template.cronjob-environment-variables-secret-name" -}}
+{{- $fullName := include "project-template.fullname" . -}}
+{{- printf "%s-cronjob-env-vars-secret-name" $fullName -}}
+{{- end -}}
