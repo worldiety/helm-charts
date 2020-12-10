@@ -106,6 +106,8 @@ servePublicly: true
 
 # mysqlBackup:
 #   schedule: "*/1 * * * *"
+#   # for mysql 5.7 this might be changed according to: https://github.com/worldiety/mysql-scp-backup
+#   containerImageTag: "0.0.5"
 #   # db host will be created: SERVICE.NAMESPACE.svc.cluster.local
 #   dbPort: 3306
 #   dbUser: backup
