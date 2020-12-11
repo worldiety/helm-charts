@@ -33,6 +33,7 @@ spec:
       imagePullSecrets:
         - name: {{ include "project-template.image-pull-secret-name" . }}
       {{- end }}
+      priorityClassName: {{ include "project-template.get-priorityClassName" . }}
       containers:
         - name: {{ .Values.name }}
           {{- if .Values.dockerhubImage }}

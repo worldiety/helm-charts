@@ -120,3 +120,10 @@ servePublicly: true
 #   skipBackupOnBuildTypes:
 #     - dev
 #     - stage
+
+# Default "buildtype > PriorityClassName mapping
+# The values can be overwritten individually.
+priorityClasses:
+  dev: wdy-develop
+  stage: wdy-staging
+  prod: wdy-production
