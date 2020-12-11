@@ -37,7 +37,7 @@ spec:
     type: Container
 
 ---
-# Resource Qutas per user, e.g. namespace
+# Resource Quotas per user, e.g. namespace
 # https://kubernetes.io/docs/tasks/administer-cluster/quota-api-object/
 apiVersion: v1
 kind: ResourceQuota

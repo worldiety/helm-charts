@@ -1,5 +1,16 @@
 # DevOps helper chart
 
+# Every project must set a cpuLimit and a ramLimit value.
+# This will be the CPU/RAM limit of all Pods in this namespace combined,
+# e.g. the ResourceQuota of this namespace.
+# 
+# cpuLimit: 1000m is 1 vCPU, 250m is 1/4 vCPU and so on
+# ramLimit: 1Gi 
+# 
+# More Information:
+# * https://kubernetes.io/docs/concepts/policy/limit-range/
+# * https://medium.com/@betz.mark/understanding-resource-limits-in-kubernetes-cpu-time-9eff74d3161b
+
 # projects:
 #   - name: example-project-1
 #     cpuLimit: 1000m
