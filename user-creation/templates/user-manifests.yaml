@@ -36,6 +36,20 @@ spec:
       memory: 32Mi
     type: Container
 
+---
+# Resource Qutas per user, e.g. namespace
+# https://kubernetes.io/docs/tasks/administer-cluster/quota-api-object/
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: {{ $namespace }}-quota
+  namespace: {{ $namespace }}
+  labels:
+    {{ $labels }}
+spec:
+  hard:
+    limits.cpu: {{ .cpuLimit }}
+    limits.memory: {{ .ramLimit }}
 
 ---
 # DEFAULT USER - This user should be used in the CI environment variables

@@ -2,4 +2,8 @@
 
 # projects:
 #   - name: example-project-1
+#     cpuLimit: 1000m
+#     ramLimit: 1Gi
 #   - name: example-project-2
+#     cpuLimit: 200m
+#     ramLimit: 800Mi
