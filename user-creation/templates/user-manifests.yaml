@@ -51,6 +51,8 @@ metadata:
     {{ $labels }}
 spec:
   hard:
+    # request can never be greater than the limit
+    # => a malicous user can not set the request to e.g. 15GB while conforming to a set limit of 2GB
     limits.cpu: {{ .cpuLimit }}
     limits.memory: {{ .ramLimit }}
 
