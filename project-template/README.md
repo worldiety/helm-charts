@@ -89,6 +89,7 @@ Following defaults are set already for the namespace.
 
          resources:
            limits:
+             cpu: 125m
              memory: 512Mi
            requests:
              cpu: 10m
@@ -303,3 +304,17 @@ You use [this script](https://github.com/worldiety/mysql-scp-backup/blob/main/cr
         - stage
 
 > **OPTIONAL** - Default: No CronJob (e.g. backup) will be created.
+
+#### priorityClasses
+
+In situations when the cluster or this namespace runs out of CPU/RAM ressources,
+we want to prioritise production services, e.g. `buildtype` `prod`.
+You can overwrite the default mappings or add new custom buildtype mappings by
+setting the `priorityClasses` in your `deployment-values.yaml` file.
+
+    priorityClasses:
+      dev: wdy-develop
+      stage: wdy-staging
+      prod: wdy-production
+
+> **OPTIONAL** - Default: The mappings from above will be applied.

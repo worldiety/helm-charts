@@ -29,13 +29,32 @@ metadata:
     {{ $labels }}
 spec:
   limits:
+  # default limits per Pod
+  # using 1:4 ratio as default
   - default:
+      cpu: 125m
       memory: 512Mi
     defaultRequest:
       cpu: 10m
       memory: 32Mi
     type: Container
 
+---
+# Resource Quotas per user, e.g. namespace
+# https://kubernetes.io/docs/tasks/administer-cluster/quota-api-object/
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: {{ $namespace }}-quota
+  namespace: {{ $namespace }}
+  labels:
+    {{ $labels }}
+spec:
+  hard:
+    # request can never be greater than the limit
+    # => a malicous user can not set the request to e.g. 15GB while conforming to a set limit of 2GB
+    limits.cpu: {{ .cpuLimit }}
+    limits.memory: {{ .ramLimit }}
 
 ---
 # DEFAULT USER - This user should be used in the CI environment variables

@@ -28,6 +28,7 @@ autoscaling:
 
 #resources:
 #  limits:
+#    cpu: 125m
 #    memory: 512Mi
 #  requests:
 #    cpu: 10m
@@ -105,7 +106,7 @@ servePublicly: true
 #  - dev
 
 # mysqlBackup:
-#   schedule: "*/1 * * * *"
+#   schedule: "30 4 * * *"
 #   # for mysql 5.7 this might be changed according to: https://github.com/worldiety/mysql-scp-backup
 #   containerImageTag: "0.0.5"
 #   # db host will be created: SERVICE.NAMESPACE.svc.cluster.local
@@ -120,3 +121,10 @@ servePublicly: true
 #   skipBackupOnBuildTypes:
 #     - dev
 #     - stage
+
+# Default "buildtype > PriorityClassName mapping
+# The values can be overwritten individually.
+priorityClasses:
+  dev: wdy-develop
+  stage: wdy-staging
+  prod: wdy-production

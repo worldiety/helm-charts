@@ -140,3 +140,20 @@ Creates the cronjob env vars secret name.
 {{- $fullName := include "project-template.fullname" . -}}
 {{- printf "%s-cronjob-env-vars-secret-name" $fullName -}}
 {{- end -}}
+
+{{/*
+Get and validate the PriorityClassName values.
+Default values are set in the `values.yaml` of this Helm Chart
+and will be overwritten by the `deployment-values.yaml`.
+*/}}
+{{- define "project-template.get-priorityClassName" -}}
+{{- $buildtype := .Values.buildtype -}}
+{{- $priorityClassName := get .Values.priorityClasses $buildtype -}}
+{{- if empty $priorityClassName }}
+{{- fail "No PriorityClassName provided. This is required, use e.g. 'wdy-develop'." -}}
+{{- end -}}
+{{- if not (hasPrefix "wdy-" $priorityClassName) }}
+{{- fail "Only wdy priority classes must be used!" -}}
+{{- end -}}
+{{- printf "%s" $priorityClassName -}}
+{{- end -}}
