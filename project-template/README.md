@@ -89,6 +89,7 @@ Following defaults are set already for the namespace.
 
          resources:
            limits:
+             cpu: 125m
              memory: 512Mi
            requests:
              cpu: 10m
