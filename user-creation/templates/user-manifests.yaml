@@ -36,7 +36,7 @@ spec:
   # default limits per Pod
   # using 1:4 ratio as default
   - default:
-      cpu: 125m
+  #    cpu: 125m
       memory: 512Mi
     defaultRequest:
       cpu: 10m
