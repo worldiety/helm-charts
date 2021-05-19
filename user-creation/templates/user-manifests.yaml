@@ -1,4 +1,8 @@
 
+{{- if empty .Values.projects }}
+{{- fail "No projects found - add projects to get a valid yaml file!" -}}
+{{- end -}}
+
 {{- $labels := include "user-creation.labels" . | nindent 4 }}
 {{- range .Values.projects }}
 {{ $namespace := .name | replace "/" "-"}}
