@@ -1,4 +1,8 @@
 
+{{- if empty .Values.projects }}
+{{- fail "No projects found - add projects to get a valid yaml file!" -}}
+{{- end -}}
+
 {{- $labels := include "user-creation.labels" . | nindent 4 }}
 {{- range .Values.projects }}
 {{ $namespace := .name | replace "/" "-"}}
@@ -32,7 +36,7 @@ spec:
   # default limits per Pod
   # using 1:4 ratio as default
   - default:
-      cpu: 125m
+  #    cpu: 125m
       memory: 512Mi
     defaultRequest:
       cpu: 10m
@@ -53,7 +57,9 @@ spec:
   hard:
     # request can never be greater than the limit
     # => a malicous user can not set the request to e.g. 15GB while conforming to a set limit of 2GB
+{{- if .cpuLimit }}
     limits.cpu: {{ .cpuLimit }}
+{{- end }}
     limits.memory: {{ .ramLimit }}
 
 ---
