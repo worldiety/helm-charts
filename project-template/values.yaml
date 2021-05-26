@@ -4,83 +4,15 @@
 ### https://github.com/worldiety/helm-charts/blob/master/project-template/README.md
 ###################################################################################################
 
-################################################################################################
-### GENERAL
-################################################################################################
-
-#name: "exampleproject-prod"
-
-#contact:
-#  name: "Alice Bob"
-
-#namespace: "helm-example-1"
-
-#buildtype: "dev"
-
 replicas: 1
 
 autoscaling:
   enabled: false
-  # minReplicas: 1
-  # maxReplicas: 10
-  # targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
-
-#resources:
-#  limits:
-#    cpu: 125m
-#    memory: 512Mi
-#  requests:
-#    cpu: 10m
-#    memory: 32Mi
-
-#probe:
-#  path: /
-#  port: http
-
-
-################################################################################################
-### DOCKER IMAGE
-################################################################################################
-
-#dockerhubImage: "syseleven/metakube-hello:1.0.0"
-
-#gitlabImage:
-#  registry: "registry.example.com"
-#  repository: "registry.example.com/test/service"
-#  tag: "develop"
-#  user: "CHANGE-ME-PASSWORD"
-#  password: "CHANGE-ME-PASSWORD"
-
-#environmentVariables:
-#  USERNAME: "demo"
-#  PASSWORD: "demo"
-
-#deprecated (always mapped and provided as service port 80)
-# containerPort: 8080
 
 ports:
   http:
     container: 8080
     service: 80
-#  mysql:
-#    container: 3306
-#    service: 3306
-#  metrics:
-#    container: 10095
-#    service: 10095
-
-################################################################################################
-### VOLUMES
-################################################################################################
-
-#persistentVolumes:
-#  - path: "/volume-mount-point-1"
-#    name: "test-volume-1"
-#    storageSize: 4
-#  - path: "/volume-mount-point-2"
-#    name: "test-volume-2"
-#    storageSize: 0.5
 
 temporaryVolumes:
   - path: "/var/cache/nginx"
@@ -88,39 +20,7 @@ temporaryVolumes:
   - path: "/tmp"
     name: "tmp"
 
-################################################################################################
-### DOMAINS
-################################################################################################
-
 servePublicly: true
-
-#customhosts:
-#  - host: "project.example.com"
-#    buildtype: prod
-#    tls: true
-#    paths:
-#      - path: "/"
-#        port: 80
-
-#noIndexingOnBuildtype:
-#  - dev
-
-# mysqlBackup:
-#   schedule: "30 4 * * *"
-#   # for mysql 5.7 this might be changed according to: https://github.com/worldiety/mysql-scp-backup
-#   containerImageTag: "0.0.5"
-#   # db host will be created: SERVICE.NAMESPACE.svc.cluster.local
-#   dbPort: 3306
-#   dbUser: backup
-#   dbPassword: "${DB_PASSWORD}"
-#   dbNames: database1,database2
-#   backupsToKeep: 2
-#   sshStorageUrl: USER@USER.your-storagebox.de
-#   sshBase64PrivateKey: "${SSH_BASE64_PRIVATE_KEY}"
-#   sshBase64PPublicKey: "${SSH_BASE64_PUBLIC_KEY}"
-#   skipBackupOnBuildTypes:
-#     - dev
-#     - stage
 
 # Default "buildtype > PriorityClassName mapping
 # The values can be overwritten individually.
