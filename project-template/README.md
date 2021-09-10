@@ -122,6 +122,17 @@ or `32m` (32MB). More information can befound in the [nginx readme](https://gith
 
 > **OPTIONAL** - Default: not set
 
+#### proxyBuffer
+
+Set the size of the proxy buffer for reading the first part of the proxied response from a pod. Units are denoted with k, m and g for kilobytes, megabytes and gigabytes, respectively.
+Typically values do not exceed kilobytes.
+More information can befound in the [nginx readme](https://github.com/kubernetes/ingress-nginx/blob/main/docs/user-guide/nginx-configuration/annotations.md#proxy-buffer-size).
+
+    proxyBuffer: "16k"
+
+> **OPTIONAL** - Default: 4 kilobytes
+
+
 ### Docker image
 
 The following configurations are only necessary, if you do not use the default CI deployment process.
