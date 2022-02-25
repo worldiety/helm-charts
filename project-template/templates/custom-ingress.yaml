@@ -52,9 +52,12 @@ spec:
       http:
         paths: {{ range .paths }}
           - path: {{ .path }}
+            pathType: "ImplementationSpecific"
             backend:
-              servicePort: {{ .port }}
-              serviceName: {{ $fullName }}
+              service:
+                name: {{ $fullName }}
+                port:
+                  number: {{ .port }}
           {{ end }}
 {{ end }}
 {{ end }}

@@ -30,7 +30,10 @@ spec:
       http:
         paths:
           - path: "/"
+            pathType: "ImplementationSpecific"
             backend:
-              servicePort: 80
-              serviceName: {{ include "project-template.fullname" . }}
+              service:
+                name: {{ include "project-template.fullname" . }}
+                port:
+                  number: 80
 {{ end }}
