@@ -4,6 +4,9 @@
 ### https://github.com/worldiety/helm-charts/blob/master/project-template/README.md
 ###################################################################################################
 
+
+cronjob:
+  schedule: "* * * * *"
 replicas: 1
 
 autoscaling:
