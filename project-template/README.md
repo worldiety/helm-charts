@@ -19,6 +19,39 @@ found within this repository.
 This section describes the values that could or must be overwritten by your project. Most of these
 values do not need to be changed or will be already applied if you are using the default CI pipeline.
 
+#### cronjob
+
+Normally, this chart deploys your application with a deployment. Thus it will run forever.
+If you instead want to deploy a short, repeating and planned task, this option is for you.
+
+For deploying a cronjob you need to provide a cron schedule:
+
+```yaml
+cronjob:
+    schedule: "0 4 * * *"
+````
+
+This config will deploy a CronJob API object instead of a deployment. In addition, no service, ingress and pod disruption budget will be deployed.
+You can supply additional flags:
+
+- `concurrencyPolicy` : Configures whether jobs are allowed to run concurrently. Default: `Forbid`. [See here for more info](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/#concurrency-policy)
+- `successfulJobsHistoryLimit` : Configures how many successful jobs shoud be kept. Default: 5. [See here for more info](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/#jobs-history-limits)
+- `failedJobsHistoryLimit ` : Configures whether jobs are allowed to run concurrently. Default: 5. [See here for more info](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/#jobs-history-limits)
+- `startingDeadlineSeconds  ` : Configures how long after the initial deadline a job is allowed to be scheduled. Default: Not defined. [See here for more info](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/#jobs-history-limits)
+- `suspend`: Set this to `true` to instruct the cronjob to stop spawning jobs [See here for more info](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/#schedule-suspension)
+
+The following is an example cronjob configuration with all possible flags set:
+
+```yaml
+cronjob:
+    concurrencyPolicy: Forbid
+    schedule: "0 4 * * *"
+    successfulJobsHistoryLimit: 5
+    failedJobsHistoryLimit: 5
+    startingDeadlineSeconds: 3600
+    suspend: false
+```
+
 #### name
 
 Set a name for the object, which will be deployed to the cluster. It must be unique within a namespace. This name will applied to each object (deployment, service, ingress etc.) in the cluster, which is created by the chart.
@@ -286,36 +319,6 @@ and add the buildtype's for the stages, where the crawling should be disabled.
 
 > **OPTIONAL** - Default: Crawling on each stage
 
-#### mysqlBackup
-
-If set a [k8s CronJob](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/) will be created.
-It will backup each database and sends the backup to the `sshStorageUrl`.
-
-The [mysql-scp-backup](https://github.com/worldiety/mysql-scp-backup) Docker Container will be used in this cronjob.
-This container supports multiple MySQL versions, e.g. 5.7 and 8+ (update-to-date).
-Choose your `containerImageTag` variable according to the information in the [mysql-scp-backup](https://github.com/worldiety/mysql-scp-backup) README.
-You use [this script](https://github.com/worldiety/mysql-scp-backup/blob/main/create-keys.sh) to create a new ssh keypair and persist it on your storage provider.
-
-    mysqlBackup:
-      # cron string: https://crontab.guru/#30_4_*_*_*
-      schedule: "30 4 * * *"
-      # for mysql 5.7 this might be changed according to: https://github.com/worldiety/mysql-scp-backup
-      containerImageTag: "0.0.5"
-      # db host will be created automatically, e.g. SERVICE.NAMESPACE.svc.cluster.local
-      dbPort: 3306
-      dbUser: backup-username
-      dbPassword: "${DB_PASSWORD}"
-      dbNames: database1,database2
-      backupsToKeep: 2
-      sshStorageUrl: USER@USER.your-storagebox.de
-      sshBase64PrivateKey: "${SSH_BASE64_PRIVATE_KEY}"
-      sshBase64PPublicKey: "${SSH_BASE64_PUBLIC_KEY}"
-      skipBackupOnBuildTypes:
-        - dev
-        - stage
-
-> **OPTIONAL** - Default: No CronJob (e.g. backup) will be created.
-
 #### priorityClasses
 
 In situations when the cluster or this namespace runs out of CPU/RAM ressources,
@@ -329,3 +332,4 @@ setting the `priorityClasses` in your `deployment-values.yaml` file.
       prod: wdy-production
 
 > **OPTIONAL** - Default: The mappings from above will be applied.
+
