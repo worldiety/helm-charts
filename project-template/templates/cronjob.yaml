@@ -1,77 +1,124 @@
-{{- $buildtype := .Values.buildtype -}}
-{{- $shouldCreateCronJob := true -}}
-{{- if .Values.mysqlBackup -}}
-{{ range $val := .Values.mysqlBackup.skipBackupOnBuildTypes }}
-{{- if eq $val $buildtype -}}
-{{- $shouldCreateCronJob = false -}}
-{{- end -}}
-{{- end -}}
-{{- end -}}
+{{- $buildType := .Values.buildtype -}}
+{{- if .Values.cronjob -}}
 
-{{- if and (.Values.mysqlBackup) ($shouldCreateCronJob) -}}
 ---
 apiVersion: batch/v1
 kind: CronJob
 metadata:
   namespace: {{ include "project-template.namespace" . }}
-  name: {{ .Values.name | replace "ä" "ae" |replace "ö" "oe" | replace "ü" "ue" }}-mysql-backup
+  name: {{ .Values.name }}
 spec:
-  schedule: "{{ .Values.mysqlBackup.schedule }}"
-  concurrencyPolicy: Forbid
-  successfulJobsHistoryLimit: 1
-  failedJobsHistoryLimit: 3
+  schedule: "{{- .Values.cronjob.schedule -}}"
+  concurrencyPolicy: {{- .Values.cronjob.concurrencyPolicy | default "Forbid"  -}}
+  successfulJobsHistoryLimit: {{- .Values.cronjob.successfulJobsHistoryLimit | default "5"  -}}
+  failedJobsHistoryLimit: {{- .Values.cronjob.failedJobsHistoryLimit | default "5"  -}}
+  {{- if .Values.cronjob.startingDeadlineSeconds  -}}
+  startingDeadlineSeconds: {{- .Values.cronjob.startingDeadlineSeconds  -}}
+  {{- end  -}}
+  suspend: {{ .Values.cronjob.suspend | default false  }}
   jobTemplate:
     spec:
       template:
-        metadata:
-          labels:
-            {{- include "project-template.selectorLabels" . | nindent 14 }}
         spec:
+          serviceAccountName: {{ include "project-template.namespace" . }}-user
+          automountServiceAccountToken: false
+          securityContext:
+            runAsNonRoot: true
+            runAsGroup: 1000
+            runAsUser: 1000
+            fsGroup: 1000
+          {{- if .Values.gitlabImage }}
+          imagePullSecrets:
+            - name: {{ include "project-template.image-pull-secret-name" . }}
+          {{- end }}
+          priorityClassName: {{ include "project-template.get-priorityClassName" . }}
+          restartPolicy: Never
           containers:
-          - name: {{ include "project-template.fullname" . }}-{{ $buildtype }}-mysql-scp-backup
-            image: worldiety/mysql-scp-backup:{{ .Values.mysqlBackup.containerImageTag }}
-            volumeMounts:
-            - mountPath: /tmp
-              name: {{ include "project-template.fullname" . }}-{{ $buildtype }}-cronjob-tmp-folder
-            imagePullPolicy: IfNotPresent
-            env:
-            # all configuration options can be found: https://github.com/worldiety/mysql-scp-backup
-            - name: DB_HOST
-              # value: SERVICE.NAMESPACE.svc.cluster.local
-              value: {{ include "project-template.fullname" . }}.{{ include "project-template.namespace" . }}.svc.cluster.local
-            - name: DB_PORT
-              value: "{{ .Values.mysqlBackup.dbPort }}"
-            - name: DB_USER
-              value: {{ .Values.mysqlBackup.dbUser }}
-            - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "project-template.cronjob-environment-variables-secret-name" . }}
-                  key: DB_PASSWORD
-            - name: DB_NAMES
-              value: {{ .Values.mysqlBackup.dbNames }}
-            - name: SERVICE_NAME
-              value: {{ include "project-template.fullname" . }}
-            - name: TEMP_LOCATION
-              value: /tmp
-            - name: BACKUPS_TO_KEEP
-              value: "{{ .Values.mysqlBackup.backupsToKeep }}"
-            - name: SSH_STORAGE_URL
-              value: {{ .Values.mysqlBackup.sshStorageUrl }}
-            - name: SSH_BASE64_PRIVATE_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "project-template.cronjob-environment-variables-secret-name" . }}
-                  key: SSH_BASE64_PRIVATE_KEY
-            - name: SSH_BASE64_PUBLIC_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "project-template.cronjob-environment-variables-secret-name" . }}
-                  key: SSH_BASE64_PUBLIC_KEY
-          restartPolicy: OnFailure
+            - name: {{ .Values.name }}
+              {{- if .Values.dockerhubImage }}
+              image: {{ .Values.dockerhubImage | quote }}
+              {{- else }}
+              image: {{ printf "%s:%s" .Values.gitlabImage.repository .Values.gitlabImage.tag }}
+              {{- end }}
+              {{- if .Values.probe -}}
+              livenessProbe:
+                httpGet:
+                  path: {{ .Values.probe.path }}
+                  {{- if .Values.probe.port }}
+                  port: {{ .Values.probe.port }}
+                  {{- else -}}
+                  port: {{ .Values.containerPort }}
+                  {{- end -}}
+                failureThreshold: 1
+                periodSeconds: 10
+              startupProbe:
+                httpGet:
+                  path: {{ .Values.probe.path }}
+                  {{- if .Values.probe.port }}
+                  port: {{ .Values.probe.port }}
+                  {{- else }}
+                  port: {{ .Values.containerPort }}
+                  {{- end }}
+                failureThreshold: 30
+                periodSeconds: 10
+              {{ end }}
+              # We do not need to specify a pullPolicy, because we want to use the default behaviour:
+              # Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
+              # ref: http://kubernetes.io/docs/user-guide/images/#pre-pulling-images
+              #
+              # We want to always pull the image, because we might use dev/stage/prod as image tags, not only 'latest'
+              # The DEBUG_imagePullPolicy variable is for testing this chart locally with minikube and *not* intendetd to be used
+              # in production
+              imagePullPolicy: {{ .Values.DEBUG_imagePullPolicy | default "Always"  }}
+              volumeMounts:
+                {{- if .Values.persistentVolumes }}
+                {{- range .Values.persistentVolumes }}
+                - mountPath: {{ .path }}
+                  name: {{ .name }}-{{ $buildType }}-folder
+                {{- end }}
+                {{- end }}
+                {{- if .Values.temporaryVolumes -}}
+                {{- range .Values.temporaryVolumes }}
+                - mountPath: {{ .path }}
+                  name: {{ .name }}-{{ $buildType }}-folder
+                {{- end }}
+                {{- end }}
+              ports:
+                {{- if .Values.containerPort }}
+                - containerPort: {{ .Values.containerPort }}
+                  name: http
+                {{- else }}
+                {{- range $key, $val := .Values.ports }}
+                - containerPort: {{ $val.container }}
+                  name: {{ $key }}
+                {{- end }}
+                {{- end }}
+              resources:
+                {{- if .Values.resources -}}
+                {{- toYaml .Values.resources | nindent 16 }}
+                {{- end }}
+              env:
+              {{- include "project-template.environment-variables-list" . | indent 16 }}
+              securityContext:
+                readOnlyRootFilesystem: true
+                privileged: false
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - all
           volumes:
-            - name: {{ include "project-template.fullname" . }}-{{ $buildtype }}-cronjob-tmp-folder
+            {{- if .Values.persistentVolumes -}}
+            {{ range .Values.persistentVolumes }}
+            - name: {{ .name }}-{{ $buildType }}-folder
+              persistentVolumeClaim:
+                claimName: {{ .name }}-{{ $buildType }}-folder
+            {{ end }}
+            {{- end }}
+
+            {{- if .Values.temporaryVolumes -}}
+            {{ range .Values.temporaryVolumes }}
+            - name: {{ .name }}-{{ $buildType }}-folder
               emptyDir: {}
-      # Specifies the number of retries before marking this job failed.
-      backoffLimit: 5
-{{ end }}
+            {{ end }}
+            {{ end }}
+{{- end -}}

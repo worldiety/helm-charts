@@ -134,14 +134,6 @@ List of environment variables.
 {{- end }}
 
 {{/*
-Creates the cronjob env vars secret name.
-*/}}
-{{- define "project-template.cronjob-environment-variables-secret-name" -}}
-{{- $fullName := include "project-template.fullname" . -}}
-{{- printf "%s-cronjob-env-vars-secret-name" $fullName -}}
-{{- end -}}
-
-{{/*
 Get and validate the PriorityClassName values.
 Default values are set in the `values.yaml` of this Helm Chart
 and will be overwritten by the `deployment-values.yaml`.

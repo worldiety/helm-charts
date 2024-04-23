@@ -1,3 +1,4 @@
+{{- if not .Values.cronjob -}}
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
@@ -20,3 +21,4 @@ spec:
   selector:
     matchLabels:
       {{- include "project-template.selectorLabels" . | nindent 6 }}
+{{- end -}}

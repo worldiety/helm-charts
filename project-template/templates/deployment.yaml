@@ -1,3 +1,4 @@
+{{- if not .Values.cronjob -}}
 {{ $buildType := .Values.buildtype }}
 apiVersion: apps/v1
 kind: Deployment
@@ -120,3 +121,4 @@ spec:
           emptyDir: {}
         {{ end }}
         {{ end }}
+{{- end -}}
