@@ -141,6 +141,18 @@ More Information: [https://kubernetes.io/docs/tasks/configure-pod-container/conf
     probe:
         path: /
         port: http
+        startup:
+            initialDelaySeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 30
+            timeoutSeconds: 1
+        liveness:
+            initialDelaySeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 1
+            timeoutSeconds: 1
 
 > **OPTIONAL** - Default: no liveness/startup probe
 
