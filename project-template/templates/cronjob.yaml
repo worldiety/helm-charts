@@ -9,12 +9,12 @@ metadata:
   name: {{ .Values.name }}
 spec:
   schedule: "{{- .Values.cronjob.schedule -}}"
-  concurrencyPolicy: {{- .Values.cronjob.concurrencyPolicy | default "Forbid"  -}}
-  successfulJobsHistoryLimit: {{- .Values.cronjob.successfulJobsHistoryLimit | default "5"  -}}
-  failedJobsHistoryLimit: {{- .Values.cronjob.failedJobsHistoryLimit | default "5"  -}}
-  {{- if .Values.cronjob.startingDeadlineSeconds  -}}
-  startingDeadlineSeconds: {{- .Values.cronjob.startingDeadlineSeconds  -}}
-  {{- end  -}}
+  concurrencyPolicy: {{ .Values.cronjob.concurrencyPolicy | default "Forbid"  }}
+  successfulJobsHistoryLimit: {{ .Values.cronjob.successfulJobsHistoryLimit | default "5"  }}
+  failedJobsHistoryLimit: {{ .Values.cronjob.failedJobsHistoryLimit | default "5"  }}
+  {{- if .Values.cronjob.startingDeadlineSeconds  }}
+  startingDeadlineSeconds: {{ .Values.cronjob.startingDeadlineSeconds  }}
+  {{- end  }}
   suspend: {{ .Values.cronjob.suspend | default false  }}
   jobTemplate:
     spec:
