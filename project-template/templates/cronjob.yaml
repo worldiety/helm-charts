@@ -40,27 +40,93 @@ spec:
               {{- else }}
               image: {{ printf "%s:%s" .Values.gitlabImage.repository .Values.gitlabImage.tag }}
               {{- end }}
-              {{- if .Values.probe -}}
+              {{- if .Values.probe }}
               livenessProbe:
                 httpGet:
                   path: {{ .Values.probe.path }}
                   {{- if .Values.probe.port }}
                   port: {{ .Values.probe.port }}
-                  {{- else -}}
+                  {{- else if .Values.containerPort }}
                   port: {{ .Values.containerPort }}
-                  {{- end -}}
+                  {{- else }}
+                  port: http
+                  {{- end }}
+              {{- if .Values.probe.liveness }}
+                {{- if .Values.probe.liveness.initialDelaySeconds }}
+                initialDelaySeconds: {{ .Values.probe.liveness.initialDelaySeconds }}
+                {{- else }}
+                initialDelaySeconds: 1
+                {{- end }}
+                {{- if .Values.probe.liveness.failureThreshold }}
+                failureThreshold: {{ .Values.probe.liveness.failureThreshold }}
+                {{- else }}
                 failureThreshold: 1
+                {{- end }}
+                {{- if .Values.probe.liveness.successThreshold }}
+                successThreshold: {{ .Values.probe.liveness.successThreshold }}
+                {{- else }}
+                successThreshold: 1
+                {{- end }}
+                {{- if .Values.probe.liveness.periodSeconds }}
+                periodSeconds: {{ .Values.probe.liveness.periodSeconds }}
+                {{- else }}
                 periodSeconds: 10
+                {{- end }}
+                {{- if .Values.probe.startup.timeoutSeconds }}
+                timeoutSeconds: {{ .Values.probe.startup.timeoutSeconds }}
+                {{- else }}
+                timeoutSeconds: 10
+                {{- end }}
+              {{- else }}
+                initialDelaySeconds: 1
+                failureThreshold: 1
+                successThreshold: 1
+                periodSeconds: 10
+                timeoutSeconds: 1
+              {{- end }}
               startupProbe:
                 httpGet:
                   path: {{ .Values.probe.path }}
                   {{- if .Values.probe.port }}
                   port: {{ .Values.probe.port }}
-                  {{- else }}
+                  {{- else if .Values.containerPort }}
                   port: {{ .Values.containerPort }}
+                  {{- else }}
+                  port: http
                   {{- end }}
+              {{- if .Values.probe.startup }}
+                {{- if .Values.probe.startup.initialDelaySeconds }}
+                initialDelaySeconds: {{ .Values.probe.startup.initialDelaySeconds }}
+                {{- else }}
+                initialDelaySeconds: 1
+                {{- end }}
+                {{- if .Values.probe.startup.failureThreshold }}
+                failureThreshold: {{ .Values.probe.startup.failureThreshold }}
+                {{- else }}
                 failureThreshold: 30
+                {{- end }}
+                {{- if .Values.probe.startup.successThreshold }}
+                successThreshold: {{ .Values.probe.startup.successThreshold }}
+                {{- else }}
+                successThreshold: 1
+                {{- end }}
+                {{- if .Values.probe.startup.periodSeconds }}
+                periodSeconds: {{ .Values.probe.startup.periodSeconds }}
+                {{- else }}
                 periodSeconds: 10
+                {{- end }}
+                {{- if .Values.probe.startup.timeoutSeconds }}
+                timeoutSeconds: {{ .Values.probe.startup.timeoutSeconds }}
+                {{- else }}
+                timeoutSeconds: 10
+                {{- end }}
+              {{- else }}
+                initialDelaySeconds: 1
+                failureThreshold: 30
+                successThreshold: 1
+                periodSeconds: 10
+                timeoutSeconds: 1
+              {{- end }}
               {{ end }}
               # We do not need to specify a pullPolicy, because we want to use the default behaviour:
               # Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'

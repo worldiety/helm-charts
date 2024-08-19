@@ -16,6 +16,9 @@ Requriements:
 ## Useful chart debugging commands
 
 ```bash
+# print resolved template on console (requires a test deployment-values.yaml)
+helm template --debug -f deployment-values.yaml --set buildtype=dev --set gitlabImage.repository=testrepo --set name=testname --set namespace=testnamespace helm-charts/project-template/
+
 # create a new namespace (k8s admin access required)
 kubectl create namespace namespace-example-1
 
