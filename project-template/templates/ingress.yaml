@@ -9,13 +9,6 @@ metadata:
   labels:
     {{- include "project-template.labels" . | nindent 4 }}
   annotations:
-    {{- if .Values.noIndexingOnBuildtype -}}
-    {{range $val := .Values.noIndexingOnBuildtype}}
-    {{- if eq $val $buildtype -}}
-      {{- include "project-template.noindexandnofollow" . | nindent 4 -}}
-    {{- end -}}
-    {{- end -}}
-    {{- end -}}
 {{- if .Values.maxBodySize }}
     nginx.ingress.kubernetes.io/proxy-body-size: {{ .Values.maxBodySize | quote }}
 {{- end }}
