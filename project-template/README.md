@@ -345,3 +345,11 @@ setting the `priorityClasses` in your `deployment-values.yaml` file.
 
 > **OPTIONAL** - Default: The mappings from above will be applied.
 
+#### Timeouts
+
+This helm chart allows to configure connect, send and read timeouts.
+All entries are unitless and in seconds.
+
+    connectTimeout: 10
+    sendTimeout: 20
+    readTimeout: 50
