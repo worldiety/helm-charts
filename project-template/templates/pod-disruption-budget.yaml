@@ -13,11 +13,13 @@ spec:
   # HA setups should not use only 1 replica (https://revolgy.com/blog/kubernetes-in-production-poddisruptionbudget/).
   # More Information: https://kubernetes.io/docs/tasks/run-application/configure-pdb/#specifying-a-poddisruptionbudget
   # Current Workaround: We have project that do not scale at the moment - to avoid downtimes, we have to clear/restart pods manually in case of e.g. a node update.
-  # {{ if gt .Values.replicas 1.0 }}
+  {{ if gt .Values.replicas 1.0 }}
   minAvailable: 1
-  # {{ else }}
-  # maxUnavailable: 1
-  # {{ end }}
+  maxUnavailable: 0
+  {{ else }}
+  minAvailable: 0
+  maxUnavailable: 1
+  {{ end }}
   selector:
     matchLabels:
       {{- include "project-template.selectorLabels" . | nindent 6 }}
